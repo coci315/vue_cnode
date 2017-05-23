@@ -92,7 +92,10 @@ export default {
       // vm.loadContent()
       router.push(value)
     })
-    document.title = titleTexts[this.$route.params.tab]
+    const tab = this.$route.params.tab
+    this.curTab = tab
+    document.title = titleTexts[tab]
+    bus.$emit('routeTabChange', tab)
     this.loadContent()
   },
   methods: {
