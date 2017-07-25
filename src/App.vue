@@ -141,14 +141,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .layout {
-  position: fixed;
-  z-index: 10;
   display: flex;
-  left: 0;
-  top: 0;
-  right: 0;
   height: 60px;
   background-color: #444;
 }
