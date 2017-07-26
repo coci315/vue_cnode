@@ -8,6 +8,7 @@
       <div>
         <ul>
           <li v-for="(topic,index) in topics" class="topic">
+            <a :href="'/topic/' + topic.id">
             <div class="title">
               <span class="put_top" v-if="topic.top">置顶</span>
               <span class="put_good" v-else-if="topic.good">精华</span>
@@ -34,6 +35,7 @@
                 <p class="last_reply_time">{{topic.last_reply_at | fromNow}}</p>
               </div>
             </div>
+            </a>
           </li>
         </ul>
         <div class="loadMore" v-show="topics.length > 0">

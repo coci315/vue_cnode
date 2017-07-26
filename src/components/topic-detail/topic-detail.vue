@@ -1,96 +1,101 @@
 <template>
-<div class="topic-detail">
-  <div class="header">
-    <div class="back" @click="back">
-      <Icon type="ios-arrow-back"></Icon>
-    </div>
-    <div class="header_title">
-      <h2>话题</h2>
-    </div>
-  </div>
-  <div class="loading-container" v-show="!data">
-    <loading :showTitle="true"></loading>
-  </div>
-  <div class="main" v-if="data">
-    <scroll class="main_wrap" 
-            :data="data.replies"
-            :pullup="true"
-            @scrollToEnd="refresh()"
-            ref="main_wrap"
-    >
-      <div>
-        <div class="post">
-          <div class="post_title">
-            <h3>{{data.title}}</h3>
-          </div>
-          <div class="post_info clearfix">
-            <div class="author">
-              <a class="avatar" :href="'/user/' + data.author.loginname">
-                <img :src="data.author.avatar_url" :alt="data.author.loginname">
-              </a>
-              <div class="name">
-                <p>
-                  <span class="put_top" v-if="data.top">置顶</span>
-                  <span class="put_good" v-else-if="data.good">精华</span>
-                  <span class="topiclist_tab" v-else>{{tabs[data.tab]}}</span>
-                  <span class="author_name">{{data.author.loginname}}</span>
-                </p>
-                <p>{{data.create_at | fromNow}}创建 · {{data.visit_count}}次浏览</p>
-              </div>
-            </div>
-            <div class="collect" @click="toggleFavorite">
-              <Icon :type="favoriteType"></Icon>
-            </div>        
-          </div>
-          <div class="post_content">
-            <div class="content" v-html="data.content"></div>
-          </div>
-        </div>
-        <div class="separation"></div>
-        <div class="replies">
-          <div class="reply_count">
-            <p>{{data.reply_count}}条回复</p>
-          </div>
-          <div class="replies_container">
-            <ul>
-              <li class="reply" v-for="(reply, index) in data.replies">
-                  <div class="reply_header clearfix">
-                    <div class="author">
-                      <a class="avatar" :href="'/user/' + reply.author.loginname">
-                        <img :src="reply.author.avatar_url" :alt="reply.author.loginname">
-                      </a>
-                      <div class="name">
-                        <p>
-                          <span class="author_name">{{reply.author.loginname}}</span>
-                        </p>
-                        <p class="info"><span class="floor">{{index+1}}楼</span> · {{reply.create_at | fromNow}}</p>
-                      </div>
-                    </div>
-                    <div class="actions">
-                      <span class="action_up" :class="{'uped': reply.is_uped}" @click="actionUp(index)">
-                        <Icon type="thumbsup"></Icon>
-                      </span>
-                      <span class="ups_count">{{reply.ups.length}}</span>
-                      <span class="action_reply">
-                        <Icon type="reply"></Icon>
-                      </span>
-                    </div> 
-                  </div>
-                  <div class="reply_content_wrap">
-                    <div class="reply_to" v-if="reply.reply_id">
-                      <p>回复：{{calculate(reply.reply_id)}}楼</p>
-                    </div>
-                    <div class="reply_content" v-html="reply.content"></div>
-                  </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="separation"></div>
+<transition name="slide">
+  <div class="topic-detail">
+    <div class="header">
+      <div class="back" @click="back">
+        <Icon type="ios-arrow-back"></Icon>
       </div>
-    </scroll>
+      <div class="header_title">
+        <h2>话题</h2>
+      </div>
+    </div>
+    <div class="loading-container" v-show="!data">
+      <loading :showTitle="true"></loading>
+    </div>
+    <div class="main" v-if="data">
+      <scroll class="main_wrap" 
+              :data="data.replies"
+              :pullup="true"
+              @scrollToEnd="refresh()"
+              ref="main_wrap"
+      >
+        <div>
+          <div class="post">
+            <div class="post_title">
+              <h3>{{data.title}}</h3>
+            </div>
+            <div class="post_info clearfix">
+              <div class="author">
+                <a class="avatar" :href="'/user/' + data.author.loginname">
+                  <img :src="data.author.avatar_url" :alt="data.author.loginname">
+                </a>
+                <div class="name">
+                  <p>
+                    <span class="put_top" v-if="data.top">置顶</span>
+                    <span class="put_good" v-else-if="data.good">精华</span>
+                    <span class="topiclist_tab" v-else>{{tabs[data.tab]}}</span>
+                    <span class="author_name">{{data.author.loginname}}</span>
+                  </p>
+                  <p>{{data.create_at | fromNow}}创建 · {{data.visit_count}}次浏览</p>
+                </div>
+              </div>
+              <div class="collect" @click="toggleFavorite">
+                <Icon :type="favoriteType"></Icon>
+              </div>        
+            </div>
+            <div class="post_content">
+              <div class="content" v-html="data.content"></div>
+            </div>
+          </div>
+          <!-- <div class="separation"></div> -->
+          <div class="replies" v-if="data.reply_count">
+            <div class="reply_count">
+              <p>{{data.reply_count}}条回复</p>
+            </div>
+            <div class="replies_container">
+              <ul>
+                <li class="reply" v-for="(reply, index) in data.replies">
+                    <div class="reply_header clearfix">
+                      <div class="author">
+                        <a class="avatar" :href="'/user/' + reply.author.loginname">
+                          <img :src="reply.author.avatar_url" :alt="reply.author.loginname">
+                        </a>
+                        <div class="name">
+                          <p>
+                            <span class="author_name">{{reply.author.loginname}}</span>
+                          </p>
+                          <p class="info"><span class="floor">{{index+1}}楼</span> · {{reply.create_at | fromNow}}</p>
+                        </div>
+                      </div>
+                      <div class="actions">
+                        <span class="action_up" :class="{'uped': reply.is_uped}" @click="actionUp(index)">
+                          <Icon type="thumbsup"></Icon>
+                        </span>
+                        <span class="ups_count">{{reply.ups.length}}</span>
+                        <span class="action_reply">
+                          <Icon type="reply"></Icon>
+                        </span>
+                      </div> 
+                    </div>
+                    <div class="reply_content_wrap">
+                      <div class="reply_to" v-if="reply.reply_id">
+                        <p>回复：{{calculate(reply.reply_id)}}楼</p>
+                      </div>
+                      <div class="reply_content" v-html="reply.content"></div>
+                    </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="no_reply" v-if="!data.reply_count">
+            <p>暂无回复</p>
+          </div>
+          <!-- <div class="separation"></div> -->
+        </div>
+      </scroll>
+    </div>
   </div>
-</div>
+</transition>
 </template>
 
 <script>
@@ -160,7 +165,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #fff;
+    background-color: #f1f1f1;
   }
   .header {
     display: flex;
@@ -199,6 +204,9 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    a {
+      color: #0d2b91;
+    }
     .main_wrap {
       height: 100%;
       overflow: hidden;
@@ -207,7 +215,7 @@ export default {
       padding: 12px 16px;
       border-top: 1px solid #ccc;
       border-bottom: 1px solid #ccc;
-      box-shadow: 0 1px 2px 0 #ccc;
+      box-shadow: 0 2px 3px 0 #ccc;
       .post_title {
         h3 {
           font-size: 14px;
@@ -276,11 +284,23 @@ export default {
     height: 6px;
     background-color: #f1f1f1;
   }
-  .replies {
+  .post,
+  .replies,
+  .no_reply {
+    background-color: #fff;
+  }
+  .replies,
+  .no_reply {
+    margin-top: 8px;
     border-bottom: 1px solid #ccc;
-    box-shadow: 0 1px 2px 0 #ccc;
+    box-shadow: 0 2px 3px 0 #ccc;
     font-size: 14px;
     color: #333;
+  }
+  .no_reply {
+    padding: 20px;
+    text-align: center;
+    color: #999;
   }
   .reply_count,
   .reply {
@@ -346,6 +366,13 @@ export default {
       margin-bottom: 10px;
       color: #80bd01;
     }
+  }
+
+  .slide-enter-active, .slide-leave-active {
+    transition: all .5s;
+  }
+  .slide-enter, .slide-leave-to {
+    transform: translate3d(100%, 0, 0);
   }
 
 </style>
