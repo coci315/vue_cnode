@@ -1,8 +1,8 @@
 <template>
-<transition name="slide">
+<!-- <transition name="slide"> -->
   <div class="topic-detail">
-    <div class="header">
-      <div class="back" @click="back">
+    <div class="header" @click="backToTop">
+      <div class="back" @click.stop="back">
         <Icon type="ios-arrow-back"></Icon>
       </div>
       <div class="header_title">
@@ -95,7 +95,7 @@
       </scroll>
     </div>
   </div>
-</transition>
+<!-- </transition> -->
 </template>
 
 <script>
@@ -133,6 +133,9 @@ export default {
     },
     back () {
       this.$router.back()
+    },
+    backToTop () {
+      this.$refs.main_wrap.scrollTo(0, 0, 500)
     },
     calculate (id) {
       const index = this.data.replies.findIndex(reply => {
@@ -368,11 +371,13 @@ export default {
     }
   }
 
-  .slide-enter-active, .slide-leave-active {
-    transition: all .5s;
-  }
-  .slide-enter, .slide-leave-to {
-    transform: translate3d(100%, 0, 0);
-  }
+  // .slide-enter-active,
+  // .slide-leave-active {
+  //   transition: all .4s;
+  // }
+  // .slide-enter,
+  // .slide-leave-active {
+  //   transform: translate3d(100%, 0, 0);
+  // }
 
 </style>

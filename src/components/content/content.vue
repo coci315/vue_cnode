@@ -1,4 +1,5 @@
 <template>
+<transition name="move">
   <div class="content">
     <scroll class="content_wrap" 
             :data="topics"
@@ -50,6 +51,7 @@
     </scroll>
     <router-view></router-view>
   </div>
+</transition>
 </template>
 
 <script>
@@ -271,5 +273,14 @@ body {
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.move-enter-active,
+.move-leave-active {
+  transition: all .4s;
+}
+.move-enter,
+.move-leave-active {
+  transform: translate3d(100%, 0, 0);
 }
 </style>
