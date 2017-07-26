@@ -144,14 +144,14 @@ export default {
 <style scoped lang="scss">
 .layout {
   display: flex;
-  height: 60px;
+  height: 48px;
   background-color: #444;
 }
 
 .layout-menu {
   flex: 0 1 60px;
-  height: 60px;
-  line-height: 60px;
+  height: 48px;
+  line-height: 48px;
   padding-left: 30px;
   font-size: 20px;
   color: #f9f9f9;
@@ -160,8 +160,8 @@ export default {
 .layout-nav {
   margin-left: -60px;
   flex: 1 1 275px;
-  height: 60px;
-  line-height: 60px;
+  height: 48px;
+  line-height: 48px;
   text-align: center;
   font-size: 14px;
   a,
