@@ -24,3 +24,17 @@ export function getTopicDetail (id, accesstoken) {
     return Promise.resolve(res.data)
   })
 }
+
+export function getUserDetail (loginname) {
+  const url = baseUrl + 'user/' + loginname
+  return axios.get(url).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
+
+export function getTopicCollect (loginname) {
+  const url = baseUrl + 'topic_collect/' + loginname
+  return axios.get(url).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
