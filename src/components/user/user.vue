@@ -1,10 +1,10 @@
 <template>
 <transition name="slideup">
   <div class="user">
-    <div class="back" @click.stop="back">
-      <Icon type="ios-arrow-back"></Icon>
-    </div>
     <div class="bg-image" ref="bgImage">
+      <div class="back" @click.stop="back">
+        <Icon type="ios-arrow-back"></Icon>
+      </div>
       <div class="user_basic">
         <div class="avatar">
           <img :src="imgUrl" alt="用户头像">
@@ -19,12 +19,23 @@
         <p class="score">积分：{{userData.score}}</p>
       </div>
     </div>
-    <tabs :tabs="tabs" :currentIndex="currentIndex" @select="selectItem"></tabs>
+    <div class="tabs-wrap" ref="tabsWrap">
+      <tabs :tabs="tabs" :currentIndex="currentIndex" @select="selectItem"></tabs>
+    </div>
+    <div class="loading-container" v-show="!userData">
+      <loading :showTitle="true"></loading>
+    </div>
     <div class="list-wrap" ref="listWrap">
       <div class="container-wrap"  v-if="userData">
-        <scroll class="container" :data="topicCollect" ref="container">
+        <scroll class="container" 
+                :data="topicCollect" 
+                ref="container"
+                @scroll="scroll"
+                :listen-scroll="listenScroll" 
+                :probe-type="probeType"
+        >
           <div>
-            <ul class="recent_replies" v-show="currentIndex === 0">
+            <ul class="recent_replies" v-show="currentIndex === 0" :style="{minHeight: ulMinHeight + 'px'}">
               <li class="reply" v-for="item in userData.recent_replies">
                 <a :href="'/topic/' + item.id">
                   <div class="item clearfix">
@@ -96,12 +107,16 @@
 import {getUserDetail, getTopicCollect} from '../../api/api'
 import tabs from '../../base/tabs/tabs'
 import scroll from '../../base/scroll/scroll'
+import loading from '../../base/loading/loading'
+import {prefixStyle} from '../../common/js/dom'
+const transform = prefixStyle('transform')
 const tabsHeight = 38
 export default {
   name: 'user',
   components: {
     tabs,
-    scroll
+    scroll,
+    loading
   },
   data () {
     return {
@@ -113,20 +128,28 @@ export default {
         {name: '最新发布'},
         {name: '话题收藏'}
       ],
-      currentIndex: 0
+      currentIndex: 0,
+      scrollY: 0
     }
   },
   created () {
     this._getUserDetail()
     this._getTopicCollect()
+    this.probeType = 3
+    this.listenScroll = true
   },
   mounted () {
     this.imageHeight = this.$refs.bgImage.clientHeight
+    this.minTranslateY = -this.imageHeight
     this.$refs.listWrap.style.top = (this.imageHeight + tabsHeight) + 'px'
+    this.ulMinHeight = window.innerHeight - tabsHeight
   },
   methods: {
     back () {
       this.$router.back()
+    },
+    scroll (pos) {
+      this.scrollY = pos.y
     },
     selectItem (index) {
       this.currentIndex = index
@@ -144,6 +167,13 @@ export default {
       getTopicCollect(this.$route.params.loginname).then(res => {
         this.topicCollect = res.data
       })
+    }
+  },
+  watch: {
+    scrollY (newVal) {
+      let translateY = Math.min(0, Math.max(this.minTranslateY, newVal))
+      this.$refs.bgImage.style[transform] = `translate3d(0,${translateY}px,0)`
+      this.$refs.tabsWrap.style[transform] = `translate3d(0,${translateY}px,0)`
     }
   }
 }
@@ -236,6 +266,18 @@ export default {
   color: #80bd01;
 }
 
+.tabs-wrap {
+  position: relative;
+  z-index: 100;
+}
+
+.loading-container {
+  position: absolute;
+  width: 100%;
+  top: 60%;
+  transform: translateY(-50%);
+}
+
 .list-wrap {
   position: absolute;
   left: 0;
@@ -244,11 +286,11 @@ export default {
 }
 .container-wrap {
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
 }
 .container {
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   li {
     padding: 12px 16px;
     border-bottom: 1px solid #ccc;
