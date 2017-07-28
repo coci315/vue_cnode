@@ -33,12 +33,15 @@
     display: flex;
     align-items: center;
     margin: 0 auto;
+    height: 38px;
     .tab-item {
       position: relative;
       flex: 1;
+      height: 100%;
       padding: 8px;
       text-align: center;
       font-size: 14px;
+      line-height: 1.5;
       color: #ccc;
       background-color: #444;
       &.active {

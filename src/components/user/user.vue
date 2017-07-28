@@ -4,7 +4,7 @@
     <div class="back" @click.stop="back">
       <Icon type="ios-arrow-back"></Icon>
     </div>
-    <div class="bg-image">
+    <div class="bg-image" ref="bgImage">
       <div class="user_basic">
         <div class="avatar">
           <img :src="imgUrl" alt="用户头像">
@@ -19,8 +19,74 @@
         <p class="score">积分：{{userData.score}}</p>
       </div>
     </div>
-    <div class="list-wrap">
-      <tabs :tabs="tabs" :currentIndex="currentIndex" @select="selectItem"></tabs>
+    <tabs :tabs="tabs" :currentIndex="currentIndex" @select="selectItem"></tabs>
+    <div class="list-wrap" ref="listWrap">
+      <div class="container-wrap"  v-if="userData">
+        <scroll class="container" :data="topicCollect" ref="container">
+          <div>
+            <ul class="recent_replies" v-show="currentIndex === 0">
+              <li class="reply" v-for="item in userData.recent_replies">
+                <a :href="'/topic/' + item.id">
+                  <div class="item clearfix">
+                    <div class="author">
+                      <a class="avatar" :href="'/user/' + item.author.loginname">
+                        <img :src="item.author.avatar_url" :alt="item.author.loginname">
+                      </a>
+                    </div>
+                    <div class="content">
+                      <h3 class="title">{{item.title}}</h3>
+                      <div class="other-info clearfix">
+                        <p class="author_name">{{item.author.loginname}}</p>
+                        <p class="reply_time">{{item.last_reply_at | fromNow}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+            <ul class="recent_topics" v-show="currentIndex === 1">
+              <li class="topic" v-for="item in userData.recent_topics">
+                <a :href="'/topic/' + item.id">
+                  <div class="item clearfix">
+                    <div class="author">
+                      <a class="avatar" :href="'/user/' + item.author.loginname">
+                        <img :src="item.author.avatar_url" :alt="item.author.loginname">
+                      </a>
+                    </div>
+                    <div class="content">
+                      <h3 class="title">{{item.title}}</h3>
+                      <div class="other-info clearfix">
+                        <p class="author_name">{{item.author.loginname}}</p>
+                        <p class="reply_time">{{item.last_reply_at | fromNow}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+            <ul class="collect_topics" v-show="currentIndex === 2">
+              <li class="topic" v-for="item in topicCollect">
+                <a :href="'/topic/' + item.id">
+                  <div class="item clearfix">
+                    <div class="author">
+                      <a class="avatar" :href="'/user/' + item.author.loginname">
+                        <img :src="item.author.avatar_url" :alt="item.author.loginname">
+                      </a>
+                    </div>
+                    <div class="content">
+                      <h3 class="title">{{item.title}}</h3>
+                      <div class="other-info clearfix">
+                        <p class="author_name">{{item.author.loginname}}</p>
+                        <p class="reply_time">{{item.last_reply_at | fromNow}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </scroll>
+      </div>
     </div>
   </div>
 </transition>
@@ -29,10 +95,13 @@
 <script>
 import {getUserDetail, getTopicCollect} from '../../api/api'
 import tabs from '../../base/tabs/tabs'
+import scroll from '../../base/scroll/scroll'
+const tabsHeight = 38
 export default {
   name: 'user',
   components: {
-    tabs
+    tabs,
+    scroll
   },
   data () {
     return {
@@ -51,12 +120,19 @@ export default {
     this._getUserDetail()
     this._getTopicCollect()
   },
+  mounted () {
+    this.imageHeight = this.$refs.bgImage.clientHeight
+    this.$refs.listWrap.style.top = (this.imageHeight + tabsHeight) + 'px'
+  },
   methods: {
     back () {
       this.$router.back()
     },
     selectItem (index) {
       this.currentIndex = index
+      setTimeout(() => {
+        this.$refs.container.refresh()
+      }, 60)
     },
     _getUserDetail () {
       getUserDetail(this.$route.params.loginname).then(res => {
@@ -158,5 +234,60 @@ export default {
 .user_score {
   right: 16px;
   color: #80bd01;
+}
+
+.list-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.container-wrap {
+  height: 100%;
+  overflow: hidden;
+}
+.container {
+  height: 100%;
+  overflow: hidden;
+  li {
+    padding: 12px 16px;
+    border-bottom: 1px solid #ccc;
+    background-color: #fff;
+    .author {
+      float: left;
+      width: 40px;
+      height: 40px;
+      margin-right: 16px;
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        img {
+          max-width: 100%;
+          border-radius: 50%;
+        }
+      }
+    }
+    .content {
+      .title {
+        margin-bottom: 4px;
+        font-size: 14px;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .other-info {
+        font-size: 12px;
+        color: #666;
+      }
+      .author_name {
+        float: left;
+      }
+      .reply_time {
+        float: right;
+      }
+    }
+  }
 }
 </style>
