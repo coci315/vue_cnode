@@ -19,7 +19,7 @@
           <label for="accessToken" v-show="showLabel">Access Token:</label>
         </transition>
       </div>
-      <input type="text" id="accessToken" placeholder="Access Token:" v-model.trim="inputText" @input="clearError">
+      <input type="text" id="accessToken" placeholder="Access Token:" v-model.trim="inputText" @input="clearError" ref="input">
       <p class="error_info" v-show="isError">{{errorText}}</p>
     </div>
     <button type="button" @click="submit">登录</button>
@@ -48,6 +48,9 @@ export default {
       return this.inputText.length > 0
     }
   },
+  mounted () {
+    this.$refs.input.focus()
+  },
   methods: {
     back () {
       this.$router.back()
@@ -64,6 +67,7 @@ export default {
       signin(this.inputText).then(res => {
         if (res.success) {
           this.signin(res)
+          this.$emit('signin')
           this.back()
         }
       }).catch(() => {

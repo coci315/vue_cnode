@@ -72,8 +72,9 @@
       </transition>
     </div>
     <!-- <keep-alive> -->
-      <router-view></router-view>
+      <router-view @signin="showTip"></router-view>
     <!-- </keep-alive> -->
+    <tip ref="tip"><p>登录成功</p></tip>
   </div>
 </template>
 
@@ -81,11 +82,15 @@
 import {bus} from './common/js/bus.js'
 import router from './router'
 import { mapGetters, mapActions } from 'vuex'
+import tip from './base/tip/tip'
 
 const names = ['全部', '精华', '分享', '问答', '招聘']
 const values = ['all', 'good', 'share', 'ask', 'job']
 export default {
   name: 'app',
+  components: {
+    tip
+  },
   data () {
     return {
       name: 0,
@@ -143,6 +148,9 @@ export default {
     changeNav (name) {
       this.name = name
       bus.$emit('changeNav', this.navName, this.navValue)
+    },
+    showTip () {
+      this.$refs.tip.show()
     },
     showSetting () {
       this.settingShow = true
