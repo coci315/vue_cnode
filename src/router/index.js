@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import content from '@/components/content/content'
 import topicDetail from '@/components/topic-detail/topic-detail'
 import user from '@/components/user/user'
+import signin from '@/components/signin/signin'
 
 Vue.use(Router)
 
@@ -25,5 +26,9 @@ export default new Router({
     path: '/user/:loginname',
     name: 'user',
     component: user
+  }, {
+    path: '/signin',
+    name: 'signin',
+    component: signin
   }]
 })

@@ -26,7 +26,7 @@
         <div class="setting" v-show="settingShow">
           <div class="set-header">
             <div class="avatar-wrap">
-              <div class="avatar">
+              <div class="avatar" @click="signin">
                 <img src="./assets/default_header.png" alt="头像">
                 <p>点击头像登录</p>
               </div>
@@ -135,7 +135,11 @@ export default {
     },
     switchTab (index) {
       this.settingShow = false
-      router.push(this.settings[index].value)
+      router.push('/topics/' + this.settings[index].value)
+    },
+    signin () {
+      this.$router.push('/signin')
+      this.settingShow = false
     }
   }
 }

@@ -38,3 +38,10 @@ export function getTopicCollect (loginname) {
     return Promise.resolve(res.data)
   })
 }
+
+export function signin (accesstoken) {
+  const url = baseUrl + 'accesstoken'
+  return axios.post(url, {accesstoken}).then(res => {
+    return Promise.resolve(res.data)
+  })
+}
