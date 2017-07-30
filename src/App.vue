@@ -25,10 +25,20 @@
       <transition name="slide">
         <div class="setting" v-show="settingShow">
           <div class="set-header">
-            <div class="avatar-wrap">
-              <div class="avatar" @click="signin">
+            <div class="avatar-wrap" v-if="!isSignin">
+              <div class="avatar" @click="toSignin">
                 <img src="./assets/default_header.png" alt="头像">
                 <p>点击头像登录</p>
+              </div>
+            </div>
+            <div class="avatar-wrap" v-if="isSignin">
+              <div class="avatar" @click="toUser">
+                <img :src="avatarUrl" alt="头像">
+                <p>{{loginname}}</p>
+                <p class="score">积分:0</p>
+              </div>
+              <div class="signout-wrap">
+                <p class="signout" @click="signout">注销</p>
               </div>
             </div>
           </div>
@@ -70,6 +80,7 @@
 <script>
 import {bus} from './common/js/bus.js'
 import router from './router'
+import { mapGetters, mapActions } from 'vuex'
 
 const names = ['全部', '精华', '分享', '问答', '招聘']
 const values = ['all', 'good', 'share', 'ask', 'job']
@@ -114,7 +125,13 @@ export default {
     },
     navValue () {
       return values[this.name]
-    }
+    },
+    ...mapGetters([
+      'isSignin',
+      'loginname',
+      'avatarUrl',
+      'id'
+    ])
   },
   created () {
     const vm = this
@@ -137,10 +154,17 @@ export default {
       this.settingShow = false
       router.push('/topics/' + this.settings[index].value)
     },
-    signin () {
+    toSignin () {
       this.$router.push('/signin')
       this.settingShow = false
-    }
+    },
+    toUser () {
+      this.$router.push('/user/' + this.loginname)
+      this.settingShow = false
+    },
+    ...mapActions([
+      'signout'
+    ])
   }
 }
 </script>
@@ -194,17 +218,23 @@ export default {
     height: 100%;
     background-color: #fff;
     .set-header {
+      position: relative;
       height: 30%;
       background: url(./assets/header_bg.jpg) no-repeat 0 0/100% 100%;
     }
     .avatar-wrap {
-      float: left;
-      width: 50%;
-      text-align: center;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 98px;
+      padding-left: 15%;
+      padding-right: 15%;
+      transform: translateY(-50%);
     }
     .avatar {
-      padding-top: 30%;
-      padding-left: 30%;
+      float: left;
+      height: 100%;
       img {
         width: 50px;
         height: 50px;
@@ -212,9 +242,24 @@ export default {
       }
       p {
         margin-top: 2px;
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
-        color: #eee;
+        color: #f1f1f1;
+        &.score {
+          font-size: 12px;
+          font-weight: normal;
+        }
+      }
+    }
+    .signout-wrap {
+      float: right;
+      height: 100%;
+      .signout {
+        margin-top: 60px;
+        padding: 10px 0 10px 10px;
+        font-size: 12px;
+        font-weight: normal;
+        color: #f1f1f1;
       }
     }
     .menus {
