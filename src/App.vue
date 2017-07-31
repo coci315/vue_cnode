@@ -38,7 +38,7 @@
                 <p class="score">积分:{{score}}</p>
               </div>
               <div class="signout-wrap">
-                <p class="signout" @click="signout">注销</p>
+                <p class="signout" @click="logout">注销</p>
               </div>
             </div>
           </div>
@@ -70,6 +70,7 @@
           </ul>
         </div>
       </transition>
+      <confirm ref="confirm" text="确定要注销吗？" confirmBtnText="注销" @confirm="signout"></confirm>
     </div>
     <!-- <keep-alive> -->
       <router-view @signin="showTip"></router-view>
@@ -83,13 +84,15 @@ import {bus} from './common/js/bus.js'
 import router from './router'
 import { mapGetters, mapActions } from 'vuex'
 import tip from './base/tip/tip'
+import confirm from './base/confirm/confirm'
 
 const names = ['全部', '精华', '分享', '问答', '招聘']
 const values = ['all', 'good', 'share', 'ask', 'job']
 export default {
   name: 'app',
   components: {
-    tip
+    tip,
+    confirm
   },
   data () {
     return {
@@ -149,6 +152,9 @@ export default {
     changeNav (name) {
       this.name = name
       bus.$emit('changeNav', this.navName, this.navValue)
+    },
+    logout () {
+      this.$refs.confirm.show()
     },
     showTip () {
       this.$refs.tip.show()
