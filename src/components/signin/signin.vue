@@ -77,10 +77,9 @@ export default {
       this.showLoading = true
       signin(this.inputText).then(res => {
         if (res.success) {
-          this.signin(res)
+          this.signin({...res, accesstoken: this.inputText})
           getUserDetail(res.loginname).then(res => {
-            console.log(this)
-            this.$store.commit('SET_SCORE', res.data.score)
+            this.saveTheScore(res.data.score)
             this.showLoading = false
             this.$emit('signin')
             this.back()
@@ -101,7 +100,8 @@ export default {
       this._getError('AccessToken验证错误')
     },
     ...mapActions([
-      'signin'
+      'signin',
+      'saveTheScore'
     ])
   }
 }

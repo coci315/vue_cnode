@@ -15,6 +15,9 @@ const mutations = {
   },
   [types.SET_SCORE] (state, score) {
     state.score = score
+  },
+  [types.SET_ACCESSTOKEN] (state, accesstoken) {
+    state.accesstoken = accesstoken
   }
 }
 

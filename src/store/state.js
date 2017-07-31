@@ -1,9 +1,12 @@
+import {loadFromLocal} from '../common/js/cache'
+
 const state = {
-  isSignin: false,
-  loginname: '',
-  avatarUrl: '',
-  id: '',
-  score: 0
+  isSignin: loadFromLocal('ISSIGNIN', false),
+  loginname: loadFromLocal('LOGINNAME', ''),
+  avatarUrl: loadFromLocal('AVATARURL', ''),
+  id: loadFromLocal('ID', ''),
+  score: loadFromLocal('SCORE', 0),
+  accesstoken: loadFromLocal('ACCESSTOKEN', '')
 }
 
 export default state

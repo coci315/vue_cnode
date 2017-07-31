@@ -85,6 +85,7 @@ import router from './router'
 import { mapGetters, mapActions } from 'vuex'
 import tip from './base/tip/tip'
 import confirm from './base/confirm/confirm'
+import {getUserDetail} from './api/api'
 
 const names = ['全部', '精华', '分享', '问答', '招聘']
 const values = ['all', 'good', 'share', 'ask', 'job']
@@ -139,7 +140,8 @@ export default {
       'loginname',
       'avatarUrl',
       'id',
-      'score'
+      'score',
+      'accesstoken'
     ])
   },
   created () {
@@ -147,6 +149,11 @@ export default {
     bus.$on('routeTabChange', function (tab) {
       vm.name = values.indexOf(tab)
     })
+    if (this.loginname) {
+      getUserDetail(this.loginname).then(res => {
+        this.saveTheScore(res.data.score)
+      })
+    }
   },
   methods: {
     changeNav (name) {
@@ -178,7 +185,8 @@ export default {
       this.settingShow = false
     },
     ...mapActions([
-      'signout'
+      'signout',
+      'saveTheScore'
     ])
   }
 }
