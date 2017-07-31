@@ -39,7 +39,7 @@
                   <p>{{data.create_at | fromNow}}创建 · {{data.visit_count}}次浏览</p>
                 </div>
               </div>
-              <div class="collect" @click="toggleFavorite">
+              <div class="collect" :class="{favorite: isFavorite}" @click="toggleFavorite">
                 <Icon :type="favoriteType"></Icon>
               </div>        
             </div>
@@ -94,18 +94,25 @@
         </div>
       </scroll>
     </div>
+    <tip ref="tip"><p>{{tipText}}</p></tip>
+    <confirm ref="confirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
   </div>
 <!-- </transition> -->
 </template>
 
 <script>
-import {getTopicDetail} from '../../api/api'
+import {getTopicDetail, collectTopic, cancelCollectTopic, upOrDownReply} from '../../api/api'
+import { mapGetters } from 'vuex'
 import scroll from '../../base/scroll/scroll'
 import loading from '../../base/loading/loading'
+import tip from '../../base/tip/tip'
+import confirm from '../../base/confirm/confirm'
 export default {
   components: {
     loading,
-    scroll
+    scroll,
+    tip,
+    confirm
   },
   data () {
     return {
@@ -115,21 +122,42 @@ export default {
         job: '招聘'
       },
       data: null,
-      isFavorite: false
+      isFavorite: false,
+      tipText: '',
+      topicId: ''
     }
   },
   computed: {
     favoriteType () {
       return this.isFavorite ? 'android-favorite' : 'android-favorite-outline'
-    }
+    },
+    ...mapGetters([
+      'isSignin',
+      'accesstoken',
+      'id'
+    ])
   },
   created () {
     this._getTopicDetail()
   },
   methods: {
     actionUp (index) {
-      const replies = this.data.replies
-      replies[index].is_uped = !replies[index].is_uped
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        const replies = this.data.replies
+        upOrDownReply(replies[index].id, this.accesstoken).then(res => {
+          if (res.success) {
+            replies[index].is_uped = !replies[index].is_uped
+            if (res.action === 'up') {
+              replies[index].ups.push(this.id)
+            } else {
+              const i = replies[index].ups.indexOf(this.id)
+              replies[index].ups.splice(i, 1)
+            }
+          }
+        })
+      }
     },
     back () {
       this.$router.back()
@@ -147,13 +175,37 @@ export default {
       this.$refs.main_wrap.refresh()
     },
     toggleFavorite () {
-      this.isFavorite = !this.isFavorite
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        if (this.isFavorite) {
+          cancelCollectTopic(this.accesstoken, this.topicId).then(res => {
+            if (res.success) {
+              this.isFavorite = false
+              this.tipText = '取消收藏成功'
+              this.$refs.tip.show()
+            }
+          })
+        } else {
+          collectTopic(this.accesstoken, this.topicId).then(res => {
+            if (res.success) {
+              this.isFavorite = true
+              this.tipText = '收藏成功'
+              this.$refs.tip.show()
+            }
+          })
+        }
+      }
+    },
+    toSignin () {
+      this.$router.push('/signin')
     },
     _getTopicDetail () {
-      getTopicDetail(this.$route.params.id).then(res => {
+      getTopicDetail(this.$route.params.id, this.accesstoken).then(res => {
         const data = res.data
         this.data = data
         this.isFavorite = data.is_collect
+        this.topicId = data.id
       })
     }
   }
@@ -260,6 +312,9 @@ export default {
       float: right;
       text-align: right;
       font-size: 24px;
+      &.favorite {
+        color: #80bd01;
+      }
     }
   }
   .put_top,
