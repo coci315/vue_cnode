@@ -12,6 +12,9 @@ const mutations = {
   },
   [types.SET_ID] (state, id) {
     state.id = id
+  },
+  [types.SET_SCORE] (state, score) {
+    state.score = score
   }
 }
 

@@ -35,7 +35,7 @@
               <div class="avatar" @click="toUser">
                 <img :src="avatarUrl" alt="头像">
                 <p>{{loginname}}</p>
-                <p class="score">积分:0</p>
+                <p class="score">积分:{{score}}</p>
               </div>
               <div class="signout-wrap">
                 <p class="signout" @click="signout">注销</p>
@@ -135,7 +135,8 @@ export default {
       'isSignin',
       'loginname',
       'avatarUrl',
-      'id'
+      'id',
+      'score'
     ])
   },
   created () {

@@ -2,7 +2,8 @@ const state = {
   isSignin: false,
   loginname: '',
   avatarUrl: '',
-  id: ''
+  id: '',
+  score: 0
 }
 
 export default state

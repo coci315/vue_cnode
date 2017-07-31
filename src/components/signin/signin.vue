@@ -28,20 +28,30 @@
       <div class="github-signin"></div>
     </div>
   </div>
+  <div class="mask" v-show="showLoading">
+    <div class="loading-container">
+      <loading :showTitle="true" title="正在登录..."></loading>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
 const uuidReg = /^\w{8}(-\w{4}){3}-\w{12}$/
-import {signin} from '../../api/api'
+import { signin, getUserDetail } from '../../api/api'
 import { mapActions } from 'vuex'
+import loading from '../../base/loading/loading'
 export default {
   data () {
     return {
       inputText: '',
       isError: false,
-      errorText: ''
+      errorText: '',
+      showLoading: false
     }
+  },
+  components: {
+    loading
   },
   computed: {
     showLabel () {
@@ -64,11 +74,17 @@ export default {
       if (!uuidReg.test(this.inputText)) {
         return this._getInputError()
       }
+      this.showLoading = true
       signin(this.inputText).then(res => {
         if (res.success) {
           this.signin(res)
-          this.$emit('signin')
-          this.back()
+          getUserDetail(res.loginname).then(res => {
+            console.log(this)
+            this.$store.commit('SET_SCORE', res.data.score)
+            this.showLoading = false
+            this.$emit('signin')
+            this.back()
+          })
         }
       }).catch(() => {
         this._getValidateError()
@@ -215,6 +231,23 @@ export default {
     padding: 4px 0;
     font-size: 12px;
     color: #f00;
+  }
+}
+
+.mask {
+  position: fixed;
+  z-index: 500;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .7);
+  .loading-container {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #f1f1f1;
   }
 }
 </style>
