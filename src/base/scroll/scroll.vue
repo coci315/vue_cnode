@@ -55,7 +55,7 @@
 
         if (this.listenScroll) {
           this.scroll.on('scroll', (pos) => {
-            this.$emit('scroll', pos)
+            this.$emit('scroll', pos, this.scroll.maxScrollY)
           })
         }
 

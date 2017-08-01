@@ -5,6 +5,9 @@
             :data="topics"
             :pullup="true"
             @scrollToEnd="loadMore"
+            :listenScroll="true"
+            :probeType="3"
+            @scroll="scroll"
     >
       <div>
         <ul>
@@ -49,6 +52,9 @@
         <loading :showTitle="true"></loading>
       </div>
     </scroll>
+    <div class="edit-btn-wrap" ref="editBtnWrap">
+      <Icon type="edit" />
+    </div>
     <router-view></router-view>
   </div>
 </transition>
@@ -85,7 +91,8 @@ export default {
       },
       page: 1,
       limit: 20,
-      curTab: 'all'
+      curTab: 'all',
+      scrollY: 0
     }
   },
   watch: {
@@ -97,6 +104,14 @@ export default {
       this.curTab = tab
       this.loadContent()
       bus.$emit('routeTabChange', tab)
+    },
+    scrollY (newVal, oldVal) {
+      if (newVal > 0) return
+      if (newVal < oldVal) {
+        this.$refs.editBtnWrap.style.bottom = '-90px'
+      } else if (newVal > oldVal) {
+        this.$refs.editBtnWrap.style.bottom = '20px'
+      }
     }
   },
   created () {
@@ -120,7 +135,7 @@ export default {
     this.loadContent()
   },
   methods: {
-    async loadMore () {
+    loadMore () {
       if (!this.loadMoreShow) return
       this.spinShow = true
       // const response = await this.$http.get(baseUrl, {
@@ -153,6 +168,11 @@ export default {
         this.topics = res.data
         this.page++
       })
+    },
+    scroll (pos, maxScrollY) {
+      if (pos.y > 0) return
+      if (pos.y < maxScrollY) return
+      this.scrollY = pos.y
     }
   }
 }
@@ -282,5 +302,22 @@ body {
 .move-enter,
 .move-leave-active {
   transform: translate3d(100%, 0, 0);
+}
+
+.edit-btn-wrap {
+  position: fixed;
+  z-index: 500;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #80bd01;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #666;
+  text-align: center;
+  line-height: 50px;
+  font-size: 24px;
+  color: #f1f1f1;
+  transition: all .4s;
 }
 </style>
