@@ -52,7 +52,7 @@
         <loading :showTitle="true"></loading>
       </div>
     </scroll>
-    <div class="edit-btn-wrap" ref="editBtnWrap">
+    <div class="edit-btn-wrap" ref="editBtnWrap" @click.stop="toCreateTopic">
       <Icon type="edit" />
     </div>
     <router-view></router-view>
@@ -168,6 +168,9 @@ export default {
         this.topics = res.data
         this.page++
       })
+    },
+    toCreateTopic () {
+      this.$router.push('/topic/create')
     },
     scroll (pos, maxScrollY) {
       if (pos.y > 0) return

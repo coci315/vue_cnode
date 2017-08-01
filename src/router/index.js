@@ -4,6 +4,7 @@ import content from '@/components/content/content'
 import topicDetail from '@/components/topic-detail/topic-detail'
 import user from '@/components/user/user'
 import signin from '@/components/signin/signin'
+import createTopic from '@/components/create-topic/create-topic'
 
 Vue.use(Router)
 
@@ -12,6 +13,10 @@ export default new Router({
   routes: [{
     path: '/',
     redirect: '/topics/all'
+  }, {
+    path: '/topic/create',
+    name: 'createTopic',
+    component: createTopic
   }, {
     path: '/topics/:tab',
     name: 'content',
