@@ -87,7 +87,8 @@ export default {
       tabs: {
         share: '分享',
         ask: '问答',
-        job: '招聘'
+        job: '招聘',
+        dev: '客户端测试'
       },
       page: 1,
       limit: 20,
@@ -309,7 +310,7 @@ body {
 
 .edit-btn-wrap {
   position: fixed;
-  z-index: 500;
+  z-index: 50;
   bottom: 20px;
   right: 20px;
   width: 50px;

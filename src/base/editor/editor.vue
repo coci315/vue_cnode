@@ -4,6 +4,8 @@
                           default_open="edit"
                           placeholder="说点什么吧..."
                           :toolbars="toolbars"
+                          :value="value"
+                          @change="passChange"
             ></mavon-editor>
         </div>
     </template>
@@ -12,6 +14,12 @@
     import { mavonEditor } from 'mavon-editor'
     import 'mavon-editor/dist/css/index.css'
     export default {
+      props: {
+        value: {
+          type: String,
+          default: ''
+        }
+      },
       name: 'editor',
       components: {
         mavonEditor
@@ -52,6 +60,11 @@
             aligncenter: false, // 居中
             alignright: false // 右对齐
           }
+        }
+      },
+      methods: {
+        passChange (value, render) {
+          this.$emit('change', value, render)
         }
       }
     }

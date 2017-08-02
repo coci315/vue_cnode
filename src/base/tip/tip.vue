@@ -40,7 +40,7 @@
   position: fixed;
   left: 50%;
   bottom: 100px;
-  z-index: 500;
+  z-index: 2500;
   padding: 10px 20px;
   background-color: rgba(0, 0, 0, .6);
   width: 160px;

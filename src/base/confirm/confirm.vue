@@ -61,7 +61,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 998;
+    z-index: 2998;
     background-color: rgba(0, 0, 0, .6);
     &.confirm-fade-enter-active {
       animation: confirm-fadein .3s;
@@ -75,7 +75,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 999;
+      z-index: 2999;
       .confirm-content {
         width: 270px;
         border-radius: 8px;

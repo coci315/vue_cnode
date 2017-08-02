@@ -24,16 +24,29 @@
         </transition>
       </span>
     </div>
-    <editor></editor>
+    <div class="topic_title">
+      <input type="text" placeholder="标题，字数10字以上" v-model="title">
+    </div>
+    <div class="topic_content">
+      <editor @change="changeContent" :value="content"></editor>
+    </div>
+    <tip ref="tip"><p>{{tipText}}</p></tip>
+    <confirm ref="confirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
   </div>
 </transition>
 </template>
 
 <script>
 import editor from '../../base/editor/editor'
+import tip from '../../base/tip/tip'
+import confirm from '../../base/confirm/confirm'
+import {createTopic} from '../../api/api'
+import { mapGetters } from 'vuex'
 export default {
   components: {
-    editor
+    editor,
+    tip,
+    confirm
   },
   data () {
     return {
@@ -52,12 +65,22 @@ export default {
         {value: 'ask', text: '问答'},
         {value: 'job', text: '招聘'},
         {value: 'dev', text: '客户端测试'}
-      ]
+      ],
+      tipText: ''
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isSignin',
+      'accesstoken'
+    ])
   },
   methods: {
     back () {
       this.$router.back()
+    },
+    changeContent (value) {
+      this.content = value
     },
     showMenu () {
       this.isShowMenu = !this.isShowMenu
@@ -67,6 +90,34 @@ export default {
     },
     select (index) {
       this.tab = this.options[index].value
+    },
+    send () {
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        if (!this._validate()) return
+        createTopic(this.accesstoken, this.title, this.tab, this.content).then(res => {
+          if (res.success) {
+            this.$router.push('/topic/' + res.topic_id)
+          }
+        })
+      }
+    },
+    toSignin () {
+      this.$router.push('/signin')
+    },
+    _validate () {
+      if (this.title.trim().length < 10) {
+        this.tipText = '标题要求10字以上'
+        this.$refs.tip.show()
+        return false
+      }
+      if (!this.content.trim()) {
+        this.tipText = '内容不能为空'
+        this.$refs.tip.show()
+        return false
+      }
+      return true
     }
   }
 }
@@ -92,6 +143,8 @@ export default {
   transform: scale(.9);
 }
 .create-topic {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   z-index: 99;
   top: 0;
@@ -99,8 +152,13 @@ export default {
   right: 0;
   bottom: 0;
   background-color: #f1f1f1;
+  input,
+  textarea {
+    caret-color: #80bd01;
+  }
 }
 .header {
+  flex: 0 1 48px;
   display: flex;
   height: 48px;
   background-color: #444;
@@ -129,7 +187,10 @@ export default {
   }
 }
 .topic_tab {
-  padding: 16px 12px;
+  flex: 0 1 52px;
+  padding: 0 12px;
+  height: 52px;
+  line-height: 52px;
   background-color: #fff;
   border-bottom: 1px solid #ccc;
   &>span {
@@ -151,17 +212,45 @@ export default {
     }
     ul {
       position: absolute;
-      z-index: 10000;
+      z-index: 2500;
       left: -10px;
-      top: -16px;
+      top: 0;
       width: 95%;
-      padding: 6px 10px;
+      padding: 0 10px;
       background-color: #f4f4f4;
       li {
-        margin: 10px 0;
+        margin: 20px 0;
         font-size: 13px;
+        line-height: 1;
       }
     }
+  }
+}
+.topic_title  {
+  flex: 0 1 52px;
+  padding: 0 12px;
+  height: 52px;
+  line-height: 52px;
+  border-bottom: 1px solid #ccc;
+  font-size: 15px;
+  background-color: #fff;
+  input {
+    width: 100%;
+    height: 80%;
+    border: none;
+    outline: none;
+    font-weight: bold;
+    color: #333;
+  }
+  ::-webkit-input-placeholder {
+    color: #aaa;
+  }
+}
+.topic_content {
+  flex: 1;
+  height: 300px;
+  textarea {
+    color: #333;
   }
 }
 </style>
