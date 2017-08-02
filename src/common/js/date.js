@@ -26,7 +26,7 @@ export function fromNow (date) {
   const time = Date.now() - date.getTime()
   const second = Math.round(time / 1000)
   if (second <= 60) {
-    return second + '秒前'
+    return '刚刚'
   } else {
     const minute = Math.round(second / 60)
     if (minute <= 60) {

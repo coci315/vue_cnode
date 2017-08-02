@@ -18,6 +18,9 @@
               :pullup="true"
               @scrollToEnd="refresh()"
               ref="main_wrap"
+              :listenScroll="true"
+              :probeType="3"
+              @scroll="scroll"
       >
         <div>
           <div class="post">
@@ -75,7 +78,7 @@
                           <Icon type="thumbsup"></Icon>
                         </span>
                         <span class="ups_count">{{reply.ups.length}}</span>
-                        <span class="action_reply">
+                        <span class="action_reply" @click="actionReply(index)">
                           <Icon type="reply"></Icon>
                         </span>
                       </div> 
@@ -97,6 +100,18 @@
         </div>
       </scroll>
     </div>
+    <div class="reply-btn-wrap" ref="replyBtnWrap" @click.stop="showEditor">
+      <Icon type="reply" />
+    </div>
+    <div class="mask" v-show="isShowEditor" @click="hideEditor"></div>
+    <transition name="drop">
+      <div class="editor-wrap" v-show="isShowEditor">
+        <editor @change="changeContent" :value="content"></editor>
+        <div class="send-btn" @click.stop="send">
+          <Icon type="android-send"></Icon>
+        </div>
+      </div>
+    </transition>
     <tip ref="tip"><p>{{tipText}}</p></tip>
     <confirm ref="confirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
   </div>
@@ -104,18 +119,21 @@
 </template>
 
 <script>
-import {getTopicDetail, collectTopic, cancelCollectTopic, upOrDownReply} from '../../api/api'
+import {getTopicDetail, collectTopic, cancelCollectTopic, upOrDownReply, createReply} from '../../api/api'
 import { mapGetters } from 'vuex'
 import scroll from '../../base/scroll/scroll'
 import loading from '../../base/loading/loading'
 import tip from '../../base/tip/tip'
 import confirm from '../../base/confirm/confirm'
+import editor from '../../base/editor/editor'
+import Reply from '../../common/js/reply'
 export default {
   components: {
     loading,
     scroll,
     tip,
-    confirm
+    confirm,
+    editor
   },
   data () {
     return {
@@ -128,7 +146,11 @@ export default {
       data: null,
       isFavorite: false,
       tipText: '',
-      topicId: ''
+      topicId: '',
+      scrollY: 0,
+      isShowEditor: false,
+      content: '',
+      replyId: ''
     }
   },
   computed: {
@@ -138,7 +160,9 @@ export default {
     ...mapGetters([
       'isSignin',
       'accesstoken',
-      'id'
+      'id',
+      'loginname',
+      'avatarUrl'
     ]),
     showEdit () {
       return this.id === this.data.author_id
@@ -166,6 +190,16 @@ export default {
         })
       }
     },
+    actionReply (index) {
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        const replies = this.data.replies
+        this.replyId = replies[index].id
+        this.content = '@' + replies[index].author.loginname + ' '
+        this.showEditor()
+      }
+    },
     back () {
       this.$router.back()
     },
@@ -178,8 +212,47 @@ export default {
       })
       return index + 1
     },
+    changeContent (value) {
+      this.content = value
+    },
     refresh () {
       this.$refs.main_wrap.refresh()
+    },
+    scroll (pos, maxScrollY) {
+      if (pos.y > 0) return
+      if (pos.y < maxScrollY) return
+      this.scrollY = pos.y
+    },
+    send () {
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        if (!this._validate()) return
+        createReply(this.topicId, this.accesstoken, this.content, this.replyId).then(res => {
+          if (res.success) {
+            this.hideEditor()
+            this.data.replies.push(new Reply({
+              id: res.reply_id,
+              loginname: this.loginname,
+              avatar_url: this.avatarUrl,
+              content: this.content,
+              reply_id: this.replyId
+            }))
+            this.content = ''
+            this.replyId = ''
+          }
+        })
+      }
+    },
+    showEditor () {
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        this.isShowEditor = true
+      }
+    },
+    hideEditor () {
+      this.isShowEditor = false
     },
     toggleFavorite () {
       if (!this.isSignin) {
@@ -217,6 +290,24 @@ export default {
         this.isFavorite = data.is_collect
         this.topicId = data.id
       })
+    },
+    _validate () {
+      if (!this.content.trim()) {
+        this.tipText = '内容不能为空'
+        this.$refs.tip.show()
+        return false
+      }
+      return true
+    }
+  },
+  watch: {
+    scrollY (newVal, oldVal) {
+      if (newVal > 0) return
+      if (newVal < oldVal) {
+        this.$refs.replyBtnWrap.style.bottom = '-90px'
+      } else if (newVal > oldVal) {
+        this.$refs.replyBtnWrap.style.bottom = '20px'
+      }
     }
   }
 }
@@ -441,6 +532,52 @@ export default {
     }
   }
 
+.reply-btn-wrap {
+  position: fixed;
+  z-index: 50;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #80bd01;
+  border-radius: 50%;
+  box-shadow: 0 0 5px 0 #666;
+  text-align: center;
+  line-height: 50px;
+  font-size: 24px;
+  color: #f1f1f1;
+  transition: all .4s;
+}
+
+.mask {
+  position: fixed;
+  z-index: 98;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .7);
+}
+
+.editor-wrap {
+  position: fixed;
+  z-index: 99;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 300px;
+  textarea {
+    caret-color: #80bd01;
+    color: #333;
+  }
+  .send-btn {
+    position: absolute;
+    z-index: 2000;
+    top: 40px;
+    right: 12px;
+    font-size: 20px;
+  }
+}
   // .slide-enter-active,
   // .slide-leave-active {
   //   transition: all .4s;
@@ -450,4 +587,12 @@ export default {
   //   transform: translate3d(100%, 0, 0);
   // }
 
+  .drop-enter-active,
+  .drop-leave-active {
+    transition: all .2s;
+  }
+  .drop-enter,
+  .drop-leave-active {
+    height: 0;
+  }
 </style>
