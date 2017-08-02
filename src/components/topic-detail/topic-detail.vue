@@ -105,7 +105,11 @@
     </div>
     <div class="mask" v-show="isShowEditor" @click="hideEditor"></div>
     <transition name="drop">
-      <div class="editor-wrap" v-show="isShowEditor">
+      <div class="editor-wrap" v-show="isShowEditor" :class="{'has_reply_to': (replyTo>0)}">
+        <div class="reply_to" v-show="replyTo>0">
+          <span class="text">回复：{{replyTo}}楼</span>
+          <span class="icon" @click.stop="resetReplyTo"><Icon type="android-close"></Icon></span> 
+        </div>
         <editor @change="changeContent" :value="content"></editor>
         <div class="send-btn" @click.stop="send">
           <Icon type="android-send"></Icon>
@@ -150,7 +154,8 @@ export default {
       scrollY: 0,
       isShowEditor: false,
       content: '',
-      replyId: ''
+      replyId: '',
+      replyTo: 0
     }
   },
   computed: {
@@ -196,6 +201,7 @@ export default {
       } else {
         const replies = this.data.replies
         this.replyId = replies[index].id
+        this.replyTo = index + 1
         this.content = '@' + replies[index].author.loginname + ' '
         this.showEditor()
       }
@@ -217,6 +223,10 @@ export default {
     },
     refresh () {
       this.$refs.main_wrap.refresh()
+    },
+    resetReplyTo () {
+      this.replyId = ''
+      this.replyTo = 0
     },
     scroll (pos, maxScrollY) {
       if (pos.y > 0) return
@@ -240,6 +250,7 @@ export default {
             }))
             this.content = ''
             this.replyId = ''
+            this.replyTo = 0
           }
         })
       }
@@ -577,7 +588,29 @@ export default {
     right: 12px;
     font-size: 20px;
   }
+  .reply_to {
+    position: absolute;
+    z-index: 2000;
+    top: -30px;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    padding: 0 18px;
+    line-height: 30px;
+    background-color: #80bd01;
+    color: #fff;
+    font-size: 13px;
+    .text {
+      float: left;
+    }
+    .icon {
+      float: right;
+      font-size: 16px;
+    }
+  }
 }
+
+
   // .slide-enter-active,
   // .slide-leave-active {
   //   transition: all .4s;
