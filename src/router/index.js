@@ -5,6 +5,7 @@ import topicDetail from '@/components/topic-detail/topic-detail'
 import user from '@/components/user/user'
 import signin from '@/components/signin/signin'
 import createTopic from '@/components/create-topic/create-topic'
+import editTopic from '@/components/edit-topic/edit-topic'
 
 Vue.use(Router)
 
@@ -35,5 +36,9 @@ export default new Router({
     path: '/signin',
     name: 'signin',
     component: signin
+  }, {
+    path: '/topic/:id/edit',
+    name: 'editTopic',
+    component: editTopic
   }]
 })

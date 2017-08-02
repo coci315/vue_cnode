@@ -17,10 +17,14 @@ export function getTopics (tab, limit, page) {
 }
 
 // 获取主题详情
-export function getTopicDetail (id, accesstoken) {
+export function getTopicDetail (id, accesstoken, mdrender) {
   var url = baseUrl + 'topic/' + id
   if (accesstoken) {
     url += '?accesstoken=' + accesstoken
+  }
+  if (mdrender != null) {
+    const index = url.indexOf('?')
+    url += (index > -1) ? ('&mdrender=' + mdrender) : ('?mdrender=' + mdrender)
   }
   return axios.get(url).then(res => {
     return Promise.resolve(res.data)

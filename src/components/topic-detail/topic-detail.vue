@@ -41,6 +41,9 @@
               </div>
               <div class="collect" :class="{favorite: isFavorite}" @click="toggleFavorite">
                 <Icon :type="favoriteType"></Icon>
+              </div>
+              <div class="edit" v-if="showEdit" @click="toEditTopic">
+                <Icon type="compose"></Icon>  
               </div>        
             </div>
             <div class="post_content">
@@ -136,7 +139,10 @@ export default {
       'isSignin',
       'accesstoken',
       'id'
-    ])
+    ]),
+    showEdit () {
+      return this.id === this.data.author_id
+    }
   },
   created () {
     this._getTopicDetail()
@@ -200,6 +206,9 @@ export default {
     },
     toSignin () {
       this.$router.push('/signin')
+    },
+    toEditTopic () {
+      this.$router.push('/topic/' + this.topicId + '/edit')
     },
     _getTopicDetail () {
       getTopicDetail(this.$route.params.id, this.accesstoken).then(res => {
@@ -316,6 +325,11 @@ export default {
       &.favorite {
         color: #80bd01;
       }
+    }
+    .edit {
+      float: right;
+      margin-right: 20px;
+      font-size: 24px;
     }
   }
   .put_top,
