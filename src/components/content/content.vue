@@ -1,6 +1,12 @@
 <template>
 <transition name="move">
   <div class="content">
+    <div class="refresh" v-show="isShowRefresh" ref="refresh">
+      <p v-show="isShowText">下拉刷新</p>
+    </div>
+    <div class="loading-wrap" v-show="refreshing">
+      <loading></loading>
+    </div>
     <scroll class="content_wrap" 
             :data="topics"
             :pullup="true"
@@ -8,6 +14,9 @@
             :listenScroll="true"
             :probeType="3"
             @scroll="scroll"
+            :pulldown="true"
+            @pulldown="refreshData"
+            ref="contentWrap"
     >
       <div>
         <ul>
@@ -97,7 +106,10 @@ export default {
       page: 1,
       limit: 20,
       curTab: 'all',
-      scrollY: 0
+      scrollY: 0,
+      isShowRefresh: false,
+      refreshing: false,
+      isShowText: true
     }
   },
   computed: {
@@ -147,14 +159,8 @@ export default {
   methods: {
     loadMore () {
       if (!this.loadMoreShow) return
+      this.page++
       this.spinShow = true
-      // const response = await this.$http.get(baseUrl, {
-      //   params: {
-      //     tab: this.curTab,
-      //     limit: this.limit,
-      //     page: this.page
-      //   }
-      // }).catch(err => console.log(err))
       getTopics(this.curTab, this.limit, this.page).then(res => {
         const data = res.data
         this.topics = this.topics.concat(data)
@@ -167,16 +173,8 @@ export default {
     },
     loadContent () {
       this.loadMoreShow = true
-      // const response = await this.$http.get(baseUrl, {
-      //   params: {
-      //     tab: this.curTab,
-      //     limit: this.limit,
-      //     page: this.page
-      //   }
-      // }).catch(err => console.log(err))
       getTopics(this.curTab, this.limit, this.page).then(res => {
         this.topics = res.data
-        this.page++
       })
     },
     toCreateTopic () {
@@ -189,9 +187,35 @@ export default {
     toSignin () {
       this.$router.push('/signin')
     },
+    refreshData () {
+      this.$refs.contentWrap.$el.style.marginTop = '30px'
+      this.isShowRefresh = false
+      this.isShowText = false
+      this.refreshing = true
+      this.page = 1
+      this.loadMoreShow = true
+      getTopics(this.curTab, this.limit, this.page).then(res => {
+        this.topics = res.data
+        this.refreshing = false
+        this.$refs.contentWrap.$el.style.marginTop = '0'
+      })
+    },
     scroll (pos, maxScrollY) {
-      if (pos.y > 0) return
+      if (pos.y > 0) {
+        if (pos.y > 10) {
+          this.isShowRefresh = true
+          this.$refs.contentWrap.$el.style.marginTop = '20px'
+        }
+        return
+      }
       if (pos.y < maxScrollY) return
+      if (pos.y === 0) {
+        this.isShowRefresh = false
+        this.isShowText = true
+        if (!this.refreshing) {
+          this.$refs.contentWrap.$el.style.marginTop = '0'
+        }
+      }
       this.scrollY = pos.y
     }
   }
@@ -203,7 +227,22 @@ html,
 body {
   width: 100%;
 }
-
+.refresh,
+.loading-wrap {
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: 48px;
+  height: 30px;
+  line-height: 30px;
+  padding-top: 10px;
+  background-color: rgba(0,0,0,0);
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+}
 .content {
   position: fixed;
   z-index: 10;
@@ -214,6 +253,7 @@ body {
   .content_wrap {
     height: 100%;
     overflow: hidden;
+    transition: all .4s;
   }
   a,
   a:hover,
