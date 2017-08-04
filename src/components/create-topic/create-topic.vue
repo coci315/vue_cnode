@@ -75,6 +75,11 @@ export default {
       'accesstoken'
     ])
   },
+  created () {
+    if (!this.isSignin) {
+      return this.$router.push('/signin')
+    }
+  },
   methods: {
     back () {
       this.$router.back()

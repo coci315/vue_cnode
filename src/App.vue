@@ -184,7 +184,7 @@ export default {
     },
     toMessage () {
       if (!this.isSignin) {
-        this.$refs.signConfirm.show()
+        this.$refs.signinConfirm.show()
       } else {
         this.$router.push('/my/message')
         this.settingShow = false

@@ -89,6 +89,9 @@ export default {
     ])
   },
   created () {
+    if (!this.isSignin) {
+      return this.$router.push('/signin')
+    }
     this._getMessages()
   },
   methods: {
