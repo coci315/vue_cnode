@@ -7,6 +7,9 @@
     <div class="title">
       <h2>登录</h2>
     </div>
+    <div class="home" @click.stop="toHome">
+      <Icon type="android-home"></Icon>
+    </div>
     <div class="logo">
       <img src="../../assets/cnodejs_light.svg" alt="logo">
       <p>cnodejs.org</p>
@@ -89,6 +92,9 @@ export default {
         this._getValidateError()
       })
     },
+    toHome () {
+      this.$router.push('/')
+    },
     _getError (text) {
       this.errorText = text
       this.isError = true
@@ -136,17 +142,24 @@ export default {
   background-image: url('../../assets/signin_bg.jpg');
 }
 
-.back {
+.back,
+.home {
   position: absolute;
   z-index: 50;
   top: 0;
-  left: 0;
   padding-left: 30px;
   width: 60px;
   height: 48px;
   line-height: 48px;
   font-size: 20px;
   color: #f9f9f9;
+}
+.back {
+  left: 0;
+}
+.home {
+  right: 0;
+  padding-left: 20px;
 }
 
 .title {
