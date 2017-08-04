@@ -6,6 +6,7 @@ import user from '@/components/user/user'
 import signin from '@/components/signin/signin'
 import createTopic from '@/components/create-topic/create-topic'
 import editTopic from '@/components/edit-topic/edit-topic'
+import message from '@/components/message/message'
 
 Vue.use(Router)
 
@@ -40,5 +41,9 @@ export default new Router({
     path: '/topic/:id/edit',
     name: 'editTopic',
     component: editTopic
+  }, {
+    path: '/my/message',
+    name: 'message',
+    component: message
   }]
 })

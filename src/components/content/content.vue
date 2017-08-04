@@ -131,7 +131,7 @@ export default {
     })
     const tab = this.$route.params.tab
     this.curTab = tab
-    document.title = titleTexts[tab]
+    document.title = titleTexts[tab] || 'CNode: Node.js专业社区'
     bus.$emit('routeTabChange', tab)
     this.loadContent()
   },

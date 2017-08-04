@@ -49,10 +49,11 @@
                 <span>{{item.text}}</span>
               </div>
             </li>
-            <li class="menu">
+            <li class="menu" @click="toMessage">
               <div class="text-wrap">
                 <Icon type="ios-bell" />
                 <span>消息</span>
+                <span class="msgs-count" v-show="msgsCount>0">{{msgsCount}}</span>
               </div>
             </li>
             <li class="menu">
@@ -71,6 +72,7 @@
         </div>
       </transition>
       <confirm ref="confirm" text="确定要注销吗？" confirmBtnText="注销" @confirm="signout"></confirm>
+      <confirm ref="signinConfirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
     </div>
     <!-- <keep-alive> -->
       <router-view @signin="showTip"></router-view>
@@ -85,7 +87,7 @@ import router from './router'
 import { mapGetters, mapActions } from 'vuex'
 import tip from './base/tip/tip'
 import confirm from './base/confirm/confirm'
-import {getUserDetail} from './api/api'
+import {getUserDetail, getMessageCount} from './api/api'
 
 const names = ['全部', '精华', '分享', '问答', '招聘']
 const values = ['all', 'good', 'share', 'ask', 'job']
@@ -125,7 +127,8 @@ export default {
           text: '招聘',
           value: 'job'
         }
-      ]
+      ],
+      msgsCount: 0
     }
   },
   computed: {
@@ -153,6 +156,9 @@ export default {
       getUserDetail(this.loginname).then(res => {
         this.saveTheScore(res.data.score)
       })
+      getMessageCount(this.accesstoken).then(res => {
+        this.msgsCount = res.data
+      })
     }
   },
   methods: {
@@ -175,6 +181,14 @@ export default {
     switchTab (index) {
       this.settingShow = false
       router.push('/topics/' + this.settings[index].value)
+    },
+    toMessage () {
+      if (!this.isSignin) {
+        this.$refs.signConfirm.show()
+      } else {
+        this.$router.push('/my/message')
+        this.settingShow = false
+      }
     },
     toSignin () {
       this.$router.push('/signin')
@@ -308,9 +322,14 @@ export default {
         display: table-cell;
         vertical-align: middle;
         padding-left: 15%;
+        padding-right: 15%;
         font-size: 14px;
         span {
           margin-left: 30px;
+        }
+        .msgs-count {
+          float: right;
+          font-weight: bold;
         }
       }
     }
