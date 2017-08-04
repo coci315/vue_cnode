@@ -56,6 +56,7 @@
       <Icon type="edit" />
     </div>
     <router-view></router-view>
+    <confirm ref="confirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
   </div>
 </transition>
 </template>
@@ -65,7 +66,9 @@ import router from '../../router'
 import {bus} from '../../common/js/bus.js'
 import scroll from '../../base/scroll/scroll'
 import loading from '../../base/loading/loading'
+import confirm from '../../base/confirm/confirm'
 import {getTopics} from '../../api/api'
+import { mapGetters } from 'vuex'
 const titleTexts = {
   all: 'CNode: Node.js专业社区',
   good: 'CNode: Node.js专业社区',
@@ -77,7 +80,8 @@ export default {
   name: 'content',
   components: {
     scroll,
-    loading
+    loading,
+    confirm
   },
   data () {
     return {
@@ -95,6 +99,11 @@ export default {
       curTab: 'all',
       scrollY: 0
     }
+  },
+  computed: {
+    ...mapGetters([
+      'isSignin'
+    ])
   },
   watch: {
     '$route' (val, oldVal) {
@@ -171,7 +180,14 @@ export default {
       })
     },
     toCreateTopic () {
-      this.$router.push('/topic/create')
+      if (!this.isSignin) {
+        this.$refs.confirm.show()
+      } else {
+        this.$router.push('/topic/create')
+      }
+    },
+    toSignin () {
+      this.$router.push('/signin')
     },
     scroll (pos, maxScrollY) {
       if (pos.y > 0) return
