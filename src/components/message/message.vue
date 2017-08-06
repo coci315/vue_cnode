@@ -18,6 +18,9 @@
     <div class="main" v-if="data">
       <scroll class="main_wrap"
               :data="msgs"
+              :pullup="true"
+              @scrollToEnd="refresh()"
+              ref="main_wrap"
       >
         <ul>
           <li class="msg" v-for="(item,index) in msgs">
@@ -32,7 +35,7 @@
                 <p>回复了您的话题</p>
               </div>
               <div class="other-info">
-                <p class="reply_time">{{item.create_at | fromNow}}</p>
+                <p class="reply_time" :class="{'not_read': item.hasNotRead}">{{item.create_at | fromNow}}</p>
                 <div class="flag-wrap" v-show="item.hasNotRead">
                   <div class="has-not-read"></div>
                 </div>
@@ -111,6 +114,9 @@ export default {
           }
         })
       }
+    },
+    refresh () {
+      this.$refs.main_wrap.refresh()
     },
     _getMessages () {
       getMessages(this.accesstoken).then(res => {
@@ -219,15 +225,18 @@ export default {
       float: right;
       .reply_time {
         font-size: 12px;
+        &.not_read {
+          color: #80bd01;
+        }
       }
       .flag-wrap {
         margin-top: 8px;
       }
       .has-not-read {
+        float: right;
         width: 8px;
         height: 8px;
         box-shadow: 0 0 10px 0 #f27040;
-        margin: 0 auto;
         background-color: #f27040;
         border-radius: 50%;
       }

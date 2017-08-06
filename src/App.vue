@@ -53,7 +53,7 @@
               <div class="text-wrap">
                 <Icon type="ios-bell" />
                 <span>消息</span>
-                <span class="msgs-count" v-show="msgsCount>0">{{msgsCount}}</span>
+                <span class="msgs-count" v-show="isSignin && msgsCount>0">{{msgsCount}}</span>
               </div>
             </li>
             <li class="menu">
@@ -152,14 +152,7 @@ export default {
     bus.$on('routeTabChange', function (tab) {
       vm.name = values.indexOf(tab)
     })
-    if (this.loginname) {
-      getUserDetail(this.loginname).then(res => {
-        this.saveTheScore(res.data.score)
-      })
-      getMessageCount(this.accesstoken).then(res => {
-        this.msgsCount = res.data
-      })
-    }
+    this._refreshData()
   },
   methods: {
     changeNav (name) {
@@ -174,6 +167,7 @@ export default {
     },
     showSetting () {
       this.settingShow = true
+      this._refreshData()
     },
     hideSetting () {
       this.settingShow = false
@@ -197,6 +191,16 @@ export default {
     toUser () {
       this.$router.push('/user/' + this.loginname)
       this.settingShow = false
+    },
+    _refreshData () {
+      if (this.loginname) {
+        getUserDetail(this.loginname).then(res => {
+          this.saveTheScore(res.data.score)
+        })
+        getMessageCount(this.accesstoken).then(res => {
+          this.msgsCount = res.data
+        })
+      }
     },
     ...mapActions([
       'signout',
