@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{dark: theme==='dark'}">
     <div class="layout">
       <div class="layout-menu" @click="showSetting">
         <Icon type="navicon-round"></Icon>
@@ -38,6 +38,9 @@
                 <p class="score">积分:{{score}}</p>
               </div>
               <div class="signout-wrap">
+                <p class="theme" @click="switchTheme">
+                  <Icon :type="themeType"></Icon>
+                </p>
                 <p class="signout" @click="logout">注销</p>
               </div>
             </div>
@@ -138,13 +141,17 @@ export default {
     navValue () {
       return values[this.name]
     },
+    themeType () {
+      return this.theme === 'dark' ? 'ios-sunny' : 'ios-moon'
+    },
     ...mapGetters([
       'isSignin',
       'loginname',
       'avatarUrl',
       'id',
       'score',
-      'accesstoken'
+      'accesstoken',
+      'theme'
     ])
   },
   created () {
@@ -176,6 +183,10 @@ export default {
       this.settingShow = false
       router.push('/topics/' + this.settings[index].value)
     },
+    switchTheme () {
+      const theme = (this.theme === 'dark') ? 'white' : 'dark'
+      this.saveTheTheme(theme)
+    },
     toMessage () {
       if (!this.isSignin) {
         this.$refs.signinConfirm.show()
@@ -204,13 +215,14 @@ export default {
     },
     ...mapActions([
       'signout',
-      'saveTheScore'
+      'saveTheScore',
+      'saveTheTheme'
     ])
   }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .layout {
   display: flex;
   height: 48px;
@@ -295,6 +307,12 @@ export default {
     .signout-wrap {
       float: right;
       height: 100%;
+      .theme {
+        text-align: right;
+        font-size: 30px;
+        line-height: 1;
+        color: #fff;
+      }
       .signout {
         margin-top: 60px;
         padding: 10px 0 10px 10px;
@@ -345,6 +363,25 @@ export default {
   .slide-enter,
   .slide-leave-active {
     transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.dark {
+  .setting-wrap {
+    .setting {
+      background-color: #666;
+      color: #fff;
+      .set-header {
+        background: #333;
+      }
+    }
+    .menus {
+      .menu {
+        &.active {
+          background-color: #777;
+        }
+      }
+    }
   }
 }
 </style>

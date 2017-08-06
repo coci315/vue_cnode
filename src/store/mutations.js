@@ -18,6 +18,9 @@ const mutations = {
   },
   [types.SET_ACCESSTOKEN] (state, accesstoken) {
     state.accesstoken = accesstoken
+  },
+  [types.SET_THEME] (state, theme) {
+    state.theme = theme
   }
 }
 

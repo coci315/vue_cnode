@@ -6,7 +6,8 @@ const state = {
   avatarUrl: loadFromLocal('AVATARURL', ''),
   id: loadFromLocal('ID', ''),
   score: loadFromLocal('SCORE', 0),
-  accesstoken: loadFromLocal('ACCESSTOKEN', '')
+  accesstoken: loadFromLocal('ACCESSTOKEN', ''),
+  theme: loadFromLocal('THEME', 'white')
 }
 
 export default state

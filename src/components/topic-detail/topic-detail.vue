@@ -694,4 +694,87 @@ export default {
   .drop-leave-active {
     height: 0;
   }
+
+  .dark {
+    .refresh {
+      color: #eee;
+    }
+
+    .topic-detail {
+      background-color: #555;
+    }
+
+    .loading-container {
+      color: #eee;
+    }
+
+    .main {
+      .post,
+      .replies,
+      .no_reply {
+        background-color: #666;
+      }
+      .post {
+        border-color: #888;
+        box-shadow: 0 2px 3px 0 #888;
+        .post_title {
+          h3 {
+            color: #ddd;
+          }
+        }
+        .post_info {
+          color: #ddd;
+          .author {
+            .name {
+              .author_name {
+                color: #eee;
+              }
+            }
+          }
+        }
+        .topiclist_tab {
+          color: #e5e5e5;
+          background-color: #999;
+        }
+        .post_content {
+          color: #ddd;
+          .markdown-text {
+            pre,
+            code {
+              background-color: #888 !important;
+              color: #ccc !important;
+            }
+          }
+        }
+      }
+
+      .replies,
+      .no_reply {
+        border-color: #888;
+        box-shadow: 0 2px 3px 0 #888;
+        color: #ddd;
+      }
+      .no_reply {
+        color: #ddd;
+      }
+      .reply {
+        border-color: #888;
+      }
+      .reply_header {
+        .author {
+          .name {
+            .author_name {
+              color: #eee;
+            }
+          }
+          .info {
+            color: #ddd;
+          }
+        }
+        .actions {
+          color: #ddd;
+        }
+      }
+    }
+  }
 </style>

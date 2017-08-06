@@ -324,4 +324,34 @@ export default {
     }
   }
 }
+
+.dark {
+  .refresh {
+    color: #eee;
+  }
+
+  .message {
+    background-color: #666;
+  }
+
+  .main {
+    .msg {
+      background-color: #666;
+      border-color: #888;
+      color: #ccc;
+      .author_name {
+        .loginname {
+          color: #eee;
+        }
+      }
+      .msg_content {
+        color: #eee;
+      }
+      .msg_reply_topic {
+        background-color: #888;
+        color: #eee;
+      }
+    }
+  }
+}
 </style>  

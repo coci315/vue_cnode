@@ -399,4 +399,43 @@ body {
   color: #f1f1f1;
   transition: all .4s;
 }
+
+.dark {
+  .refresh,
+  .loading-wrap {
+    color: #eee;
+  }
+  .content {
+    background-color: #666;
+    a,
+    a:hover,
+    a:active {
+      color: #eee;
+    }
+    a:visited {
+      color: #aaa;
+    }
+  }
+  .topic {
+    border-color: #888;
+  }
+  .title {
+    .topiclist_tab {
+      color: #e5e5e5;
+      background-color: #999;
+    }
+    h2 {
+      color: #fff;
+    }
+  }
+  .create {
+    color: #ccc;
+  }
+  .loadMore {
+    color: #eee;
+  }
+  .loading-container {
+    color: #eee;
+  }
+}
 </style>

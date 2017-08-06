@@ -38,3 +38,7 @@ export function saveSignout () {
 export function saveScore (score) {
   saveToLocal('SCORE', score)
 }
+
+export function saveTheme (theme) {
+  saveToLocal('THEME', theme)
+}

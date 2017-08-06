@@ -332,4 +332,25 @@ export default {
     }
   }
 }
+
+.dark {
+  .user {
+    background-color: #555;
+  }
+
+  .container {
+    li {
+      background-color: #666;
+      border-color: #888;
+      .content {
+        .title {
+          color: #ddd;
+        }
+        .other-info {
+          color: #ddd;
+        }
+      }
+    }
+  }
+}
 </style>

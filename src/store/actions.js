@@ -1,5 +1,5 @@
 import * as types from './mutation-types'
-import {saveSignin, saveSignout, saveScore} from '../common/js/cache'
+import {saveSignin, saveSignout, saveScore, saveTheme} from '../common/js/cache'
 
 export const signin = function ({commit}, {loginname, avatar_url, id, accesstoken}) {
   saveSignin({loginname, avatar_url, id, accesstoken})
@@ -22,4 +22,9 @@ export const signout = function ({commit}) {
 export const saveTheScore = function ({commit}, score) {
   saveScore(score)
   commit(types.SET_SCORE, score)
+}
+
+export const saveTheTheme = function ({commit}, theme) {
+  saveTheme(theme)
+  commit(types.SET_THEME, theme)
 }
