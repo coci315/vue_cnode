@@ -30,6 +30,11 @@
                 <img src="./assets/default_header.png" alt="头像">
                 <p>点击头像登录</p>
               </div>
+              <div class="signout-wrap">
+                <p class="theme" @click="switchTheme">
+                  <Icon :type="themeType"></Icon>
+                </p>
+              </div>
             </div>
             <div class="avatar-wrap" v-if="isSignin">
               <div class="avatar" @click="toUser">
