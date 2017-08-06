@@ -55,7 +55,7 @@
                 </a>
               </li>
             </ul>
-            <ul class="recent_topics" v-show="currentIndex === 1">
+            <ul class="recent_topics" v-show="currentIndex === 1" :style="{minHeight: ulMinHeight + 'px'}">
               <li class="topic" v-for="item in userData.recent_topics">
                 <a :href="'/topic/' + item.id">
                   <div class="item clearfix">
@@ -75,7 +75,7 @@
                 </a>
               </li>
             </ul>
-            <ul class="collect_topics" v-show="currentIndex === 2">
+            <ul class="collect_topics" v-show="currentIndex === 2" :style="{minHeight: ulMinHeight + 'px'}">
               <li class="topic" v-for="item in topicCollect">
                 <a :href="'/topic/' + item.id">
                   <div class="item clearfix">

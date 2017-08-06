@@ -2,7 +2,10 @@
 <transition name="move">
   <div class="content">
     <div class="refresh" v-show="isShowRefresh" ref="refresh">
-      <p v-show="isShowText">下拉刷新</p>
+      <p v-show="isShowText">
+        <span class="arrow"><Icon :class="{rotate:isRotate}" type="android-arrow-down"></Icon></span>
+        {{refreshText}}
+      </p>
     </div>
     <div class="loading-wrap" v-show="refreshing">
       <loading></loading>
@@ -109,7 +112,9 @@ export default {
       scrollY: 0,
       isShowRefresh: false,
       refreshing: false,
-      isShowText: true
+      isShowText: true,
+      refreshText: '下拉刷新',
+      isRotate: false
     }
   },
   computed: {
@@ -119,7 +124,6 @@ export default {
   },
   watch: {
     '$route' (val, oldVal) {
-      console.log(val)
       this.page = 1
       const tab = val.params.tab
       document.title = titleTexts[tab]
@@ -188,7 +192,7 @@ export default {
       this.$router.push('/signin')
     },
     refreshData () {
-      this.$refs.contentWrap.$el.style.marginTop = '30px'
+      this.$refs.contentWrap.$el.style.marginTop = '20px'
       this.isShowRefresh = false
       this.isShowText = false
       this.refreshing = true
@@ -204,7 +208,14 @@ export default {
       if (pos.y > 0) {
         if (pos.y > 10) {
           this.isShowRefresh = true
-          this.$refs.contentWrap.$el.style.marginTop = '20px'
+          this.$refs.contentWrap.$el.style.marginTop = '30px'
+        }
+        if (pos.y > 50) {
+          this.refreshText = '释放更新'
+          this.isRotate = true
+        } else {
+          this.refreshText = '下拉刷新'
+          this.isRotate = false
         }
         return
       }
@@ -242,6 +253,14 @@ body {
   color: #333;
   font-weight: bold;
   text-align: center;
+}
+.refresh {
+  .arrow i{
+    transition: all .2s;
+    &.rotate {
+      transform: rotate(-180deg);
+    }
+  }
 }
 .content {
   position: fixed;
