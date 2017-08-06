@@ -20,9 +20,23 @@
               :data="msgs"
               :pullup="true"
               @scrollToEnd="refresh()"
-              ref="main_wrap"
+              :listenScroll="true"
+              :probeType="3"
+              @scroll="scroll"
+              :pulldown="true"
+              @pulldown="refreshData"
+              ref="mainWrap"
       >
-        <ul>
+        <ul ref="ul">
+          <div class="refresh" v-show="isShowRefresh" ref="refresh">
+            <p v-show="isShowText">
+              <span class="arrow"><Icon :class="{rotate:isRotate}" type="android-arrow-down"></Icon></span>
+              {{refreshText}}
+            </p>
+            <div class="loading-wrap" v-show="refreshing">
+              <loading></loading>
+            </div>
+          </div>
           <li class="msg" v-for="(item,index) in msgs">
             <div class="msg_header clearfix">
               <div class="author">
@@ -69,7 +83,12 @@ export default {
   data () {
     return {
       data: null,
-      tipText: ''
+      tipText: '',
+      isShowRefresh: true,
+      isShowText: true,
+      refreshText: '下拉刷新',
+      isRotate: false,
+      refreshing: false
     }
   },
   computed: {
@@ -118,6 +137,33 @@ export default {
     refresh () {
       this.$refs.main_wrap.refresh()
     },
+    refreshData () {
+      this.$refs.ul.style.marginTop = '30px'
+      this.refreshing = true
+      this.isShowText = false
+      getMessages(this.accesstoken).then(res => {
+        if (res.success) {
+          this.data = res.data
+          this.refreshing = false
+          setTimeout(() => {
+            this.isShowText = true
+          }, 500)
+          this.$refs.ul.style.marginTop = '0'
+          this.tipText = '刷新成功'
+          this.$refs.tip.show()
+        }
+      })
+    },
+    scroll (pos) {
+      const y = pos.y
+      if (y > 50) {
+        this.refreshText = '释放更新'
+        this.isRotate = true
+      } else {
+        this.refreshText = '下拉刷新'
+        this.isRotate = false
+      }
+    },
     _getMessages () {
       getMessages(this.accesstoken).then(res => {
         if (res.success) {
@@ -137,6 +183,27 @@ export default {
 .slideup-enter,
 .slideup-leave-active {
   transform: translate3d(0, 100%, 0);
+}
+
+.refresh{
+  position: absolute;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  top: -30px;
+  height: 30px;
+  line-height: 30px;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  .arrow i{
+    transition: all .2s;
+    &.rotate {
+      transform: rotate(-180deg);
+    }
+  }
 }
 .message {
   position: fixed;
@@ -189,6 +256,10 @@ export default {
   .main_wrap {
     height: 100%;
     overflow: hidden;
+    ul {
+      position: relative;
+      transition: all .4s;
+    }
   }
   .msg {
     padding: 12px 16px;
