@@ -185,7 +185,7 @@ export default {
   transform: translate3d(0, 100%, 0);
 }
 
-.refresh{
+.refresh {
   position: absolute;
   z-index: 20;
   left: 0;

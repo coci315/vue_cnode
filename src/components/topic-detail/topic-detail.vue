@@ -21,8 +21,19 @@
               :listenScroll="true"
               :probeType="3"
               @scroll="scroll"
+              :pulldown="true"
+              @pulldown="refreshData"
       >
-        <div>
+        <div :style="{minHeight: mainMinHeight + 'px'}" ref="div">
+          <div class="refresh" v-show="isShowRefresh" ref="refresh">
+            <p v-show="isShowText">
+              <span class="arrow"><Icon :class="{rotate:isRotate}" type="android-arrow-down"></Icon></span>
+              {{refreshText}}
+            </p>
+            <div class="loading-wrap" v-show="refreshing">
+              <loading></loading>
+            </div>
+          </div>
           <div class="post">
             <div class="post_title">
               <h3>{{data.title}}</h3>
@@ -131,6 +142,7 @@ import tip from '../../base/tip/tip'
 import confirm from '../../base/confirm/confirm'
 import editor from '../../base/editor/editor'
 import Reply from '../../common/js/reply'
+const headerHeight = 47
 export default {
   components: {
     loading,
@@ -155,7 +167,12 @@ export default {
       isShowEditor: false,
       content: '',
       replyId: '',
-      replyTo: 0
+      replyTo: 0,
+      isShowRefresh: true,
+      isShowText: true,
+      refreshText: '下拉刷新',
+      isRotate: false,
+      refreshing: false
     }
   },
   computed: {
@@ -175,6 +192,9 @@ export default {
   },
   created () {
     this._getTopicDetail()
+  },
+  mounted () {
+    this.mainMinHeight = window.innerHeight - headerHeight
   },
   methods: {
     actionUp (index) {
@@ -224,11 +244,37 @@ export default {
     refresh () {
       this.$refs.main_wrap.refresh()
     },
+    refreshData () {
+      this.$refs.div.style.marginTop = '30px'
+      this.refreshing = true
+      this.isShowText = false
+      getTopicDetail(this.$route.params.id, this.accesstoken).then(res => {
+        const data = res.data
+        this.data = data
+        this.isFavorite = data.is_collect
+        this.topicId = data.id
+        this.refreshing = false
+        setTimeout(() => {
+          this.isShowText = true
+        }, 500)
+        this.$refs.div.style.marginTop = '0'
+        this.tipText = '刷新成功'
+        this.$refs.tip.show()
+      })
+    },
     resetReplyTo () {
       this.replyId = ''
       this.replyTo = 0
     },
     scroll (pos, maxScrollY) {
+      const y = pos.y
+      if (y > 50) {
+        this.refreshText = '释放更新'
+        this.isRotate = true
+      } else {
+        this.refreshText = '下拉刷新'
+        this.isRotate = false
+      }
       if (pos.y > 0) return
       if (pos.y < maxScrollY) return
       this.scrollY = pos.y
@@ -325,6 +371,26 @@ export default {
 </script>
 
 <style scoped rel="stylesheet/scss" lang="scss">
+  .refresh {
+    position: absolute;
+    z-index: 20;
+    left: 0;
+    right: 0;
+    top: -30px;
+    height: 30px;
+    line-height: 30px;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    .arrow i{
+      transition: all .2s;
+      &.rotate {
+        transform: rotate(-180deg);
+      }
+    }
+  }
   .topic-detail {
     position: fixed;
     z-index: 99;
