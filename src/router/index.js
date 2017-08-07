@@ -7,6 +7,7 @@ import signin from '@/components/signin/signin'
 import createTopic from '@/components/create-topic/create-topic'
 import editTopic from '@/components/edit-topic/edit-topic'
 import message from '@/components/message/message'
+import options from '@/components/options/options'
 
 Vue.use(Router)
 
@@ -45,5 +46,9 @@ export default new Router({
     path: '/my/message',
     name: 'message',
     component: message
+  }, {
+    path: '/setting',
+    name: 'options',
+    component: options
   }]
 })

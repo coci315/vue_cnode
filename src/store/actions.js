@@ -1,5 +1,5 @@
 import * as types from './mutation-types'
-import {saveSignin, saveSignout, saveScore, saveTheme} from '../common/js/cache'
+import {saveSignin, saveSignout, saveScore, saveTheme, saveDraftSetting, saveTopicTailSetting, saveTopicTail} from '../common/js/cache'
 
 export const signin = function ({commit}, {loginname, avatar_url, id, accesstoken}) {
   saveSignin({loginname, avatar_url, id, accesstoken})
@@ -27,4 +27,19 @@ export const saveTheScore = function ({commit}, score) {
 export const saveTheTheme = function ({commit}, theme) {
   saveTheme(theme)
   commit(types.SET_THEME, theme)
+}
+
+export const saveTheDraftSetting = function ({commit}, isSaveDraft) {
+  saveDraftSetting(isSaveDraft)
+  commit(types.SET_ISSAVEDRAFT, isSaveDraft)
+}
+
+export const saveTheTopicTailSetting = function ({commit}, isTopicTailOn) {
+  saveTopicTailSetting(isTopicTailOn)
+  commit(types.SET_ISTOPICTAILON, isTopicTailOn)
+}
+
+export const saveTheTopicTail = function ({commit}, topicTail) {
+  saveTopicTail(topicTail)
+  commit(types.SET_TOPICTAIL, topicTail)
 }

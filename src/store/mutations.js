@@ -21,6 +21,15 @@ const mutations = {
   },
   [types.SET_THEME] (state, theme) {
     state.theme = theme
+  },
+  [types.SET_ISSAVEDRAFT] (state, isSaveDraft) {
+    state.isSaveDraft = isSaveDraft
+  },
+  [types.SET_ISTOPICTAILON] (state, isTopicTailOn) {
+    state.isTopicTailOn = isTopicTailOn
+  },
+  [types.SET_TOPICTAIL] (state, topicTail) {
+    state.topicTail = topicTail
   }
 }
 

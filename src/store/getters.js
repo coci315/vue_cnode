@@ -5,3 +5,6 @@ export const id = state => state.id
 export const score = state => state.score
 export const accesstoken = state => state.accesstoken
 export const theme = state => state.theme
+export const isSaveDraft = state => state.isSaveDraft
+export const isTopicTailOn = state => state.isTopicTailOn
+export const topicTail = state => state.topicTail

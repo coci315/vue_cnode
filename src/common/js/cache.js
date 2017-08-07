@@ -42,3 +42,15 @@ export function saveScore (score) {
 export function saveTheme (theme) {
   saveToLocal('THEME', theme)
 }
+
+export function saveDraftSetting (isSaveDraft) {
+  saveToLocal('ISSAVEDRAFT', isSaveDraft)
+}
+
+export function saveTopicTailSetting (isTopicTailOn) {
+  saveToLocal('ISTOPICTAILON', isTopicTailOn)
+}
+
+export function saveTopicTail (topicTail) {
+  saveToLocal('TOPICTAIL', topicTail)
+}

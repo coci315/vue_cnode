@@ -64,7 +64,7 @@
                 <span class="msgs-count" v-show="isSignin && msgsCount>0">{{msgsCount}}</span>
               </div>
             </li>
-            <li class="menu">
+            <li class="menu" @click="toSetting">
               <div class="text-wrap">
                 <Icon type="android-settings" />
                 <span>设置</span>
@@ -199,6 +199,10 @@ export default {
         this.$router.push('/my/message')
         this.settingShow = false
       }
+    },
+    toSetting () {
+      this.$router.push('/setting')
+      this.settingShow = false
     },
     toSignin () {
       this.$router.push('/signin')
