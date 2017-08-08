@@ -166,7 +166,7 @@ export default {
       scrollY: 0,
       isShowEditor: false,
       content: '',
-      renderContent: '',
+      // renderContent: '',
       replyId: '',
       replyTo: 0,
       isShowRefresh: true,
@@ -243,7 +243,7 @@ export default {
     },
     changeContent (value, render) {
       this.content = value
-      this.renderContent = render
+      // this.renderContent = render
     },
     refresh () {
       this.$refs.main_wrap.refresh()
@@ -305,7 +305,7 @@ export default {
             //   reply_id: this.replyId
             // }))
             this.content = ''
-            this.renderContent = ''
+            // this.renderContent = ''
             this.replyId = ''
             this.replyTo = 0
             this._getTopicDetail()
