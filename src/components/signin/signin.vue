@@ -88,8 +88,9 @@ export default {
             this.back()
           })
         }
-      }).catch(() => {
+      }).catch((e) => {
         this._getValidateError()
+        this.showLoading = false
       })
     },
     toHome () {

@@ -318,7 +318,7 @@ export default {
       height: 100%;
       .theme {
         text-align: right;
-        font-size: 30px;
+        font-size: 40px;
         line-height: 1;
         color: #fff;
       }
@@ -388,6 +388,9 @@ export default {
       .menu {
         &.active {
           background-color: #777;
+        }
+        &:nth-child(5) {
+          border-color: #888;
         }
       }
     }
