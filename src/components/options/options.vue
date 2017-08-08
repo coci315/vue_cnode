@@ -263,4 +263,39 @@ export default {
     }
   }
 }
+
+.dark {
+  .options,
+  .topic-tail {
+    background-color: #555;
+    .main {
+      .option {
+        background-color: #666;
+        .content {
+          .text {
+            .text_main {
+              color: #eee;
+            }
+            .text_desc {
+              color: #ccc;
+            }
+          }
+          &.disabled {
+            .text {
+              .text_main {
+                color: #999;
+              }
+            }
+          }
+        }
+      }
+      .set-topic-tail {
+        background-color: #666;
+        textarea {
+          color: #eee;
+        }
+      }
+    }
+  }
+}
 </style>
