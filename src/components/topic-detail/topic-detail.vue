@@ -141,7 +141,7 @@ import loading from '../../base/loading/loading'
 import tip from '../../base/tip/tip'
 import confirm from '../../base/confirm/confirm'
 import editor from '../../base/editor/editor'
-import Reply from '../../common/js/reply'
+// import Reply from '../../common/js/reply'
 const headerHeight = 47
 export default {
   components: {
@@ -166,6 +166,7 @@ export default {
       scrollY: 0,
       isShowEditor: false,
       content: '',
+      renderContent: '',
       replyId: '',
       replyTo: 0,
       isShowRefresh: true,
@@ -184,7 +185,9 @@ export default {
       'accesstoken',
       'id',
       'loginname',
-      'avatarUrl'
+      'avatarUrl',
+      'isTopicTailOn',
+      'topicTail'
     ]),
     showEdit () {
       return this.id === this.data.author_id
@@ -238,8 +241,9 @@ export default {
       })
       return index + 1
     },
-    changeContent (value) {
+    changeContent (value, render) {
       this.content = value
+      this.renderContent = render
     },
     refresh () {
       this.$refs.main_wrap.refresh()
@@ -284,19 +288,27 @@ export default {
         this.$refs.confirm.show()
       } else {
         if (!this._validate()) return
-        createReply(this.topicId, this.accesstoken, this.content, this.replyId).then(res => {
+        let content = this.content
+        // let renderContent = this.renderContent
+        if (this.isTopicTailOn) {
+          content += ('\n\n' + this.topicTail)
+          // renderContent += ('\n\n' + this.topicTail)
+        }
+        createReply(this.topicId, this.accesstoken, content, this.replyId).then(res => {
           if (res.success) {
             this.hideEditor()
-            this.data.replies.push(new Reply({
-              id: res.reply_id,
-              loginname: this.loginname,
-              avatar_url: this.avatarUrl,
-              content: this.content,
-              reply_id: this.replyId
-            }))
+            // this.data.replies.push(new Reply({
+            //   id: res.reply_id,
+            //   loginname: this.loginname,
+            //   avatar_url: this.avatarUrl,
+            //   content: renderContent,
+            //   reply_id: this.replyId
+            // }))
             this.content = ''
+            this.renderContent = ''
             this.replyId = ''
             this.replyTo = 0
+            this._getTopicDetail()
           }
         })
       }
