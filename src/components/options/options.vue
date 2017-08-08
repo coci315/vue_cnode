@@ -38,7 +38,7 @@
         <div class="switch"><my-switch :value="isTopicTailOn" @change="changeTopicTailSetting"></my-switch></div>
       </div>
     </div>
-    <div class="option">
+    <div class="option" @click="setTopicTail">
       <div class="content" :class="{disabled: !isTopicTailOn}">
         <div class="text">
           <p class="text_main">设置小尾巴</p>
@@ -46,6 +46,26 @@
       </div>
     </div>
   </div>
+  <transition name="slideup">
+    <div class="topic-tail" v-if="showTopicTail">
+      <div class="header">
+        <div class="close" @click.stop="closeTopicTail">
+          <Icon type="android-close"></Icon>
+        </div>
+        <div class="header_title">
+          <h2>设置小尾巴</h2>
+        </div>
+        <div class="default-tail" @click.stop="setDefaultTail">
+          <p>默认尾巴</p>
+        </div>
+      </div>
+      <div class="main">
+        <div class="set-topic-tail">
+          <textarea v-model="topicTailValue" @input="changeTopicTail" ref="textarea"></textarea>
+        </div>
+      </div>
+    </div>
+  </transition>
 </div>
 </transition>
 </template>
@@ -53,9 +73,16 @@
 <script>
 import mySwitch from '../../base/switch/switch'
 import { mapGetters, mapActions } from 'vuex'
+const DEFAULTTAIL = '来自vue-cnode'
 export default {
   components: {
     mySwitch
+  },
+  data () {
+    return {
+      showTopicTail: false,
+      topicTailValue: ''
+    }
   },
   computed: {
     ...mapGetters([
@@ -64,6 +91,9 @@ export default {
       'isTopicTailOn',
       'topicTail'
     ])
+  },
+  created () {
+    this.topicTailValue = this.topicTail
   },
   methods: {
     back () {
@@ -81,6 +111,24 @@ export default {
     },
     changeTopicTailSetting (on) {
       this.saveTheTopicTailSetting(on)
+    },
+    changeTopicTail () {
+      this.saveTheTopicTail(this.topicTailValue)
+    },
+    closeTopicTail () {
+      this.showTopicTail = false
+    },
+    setTopicTail () {
+      if (this.isTopicTailOn) {
+        this.showTopicTail = true
+        this.$nextTick(() => {
+          this.$refs.textarea.focus()
+        })
+      }
+    },
+    setDefaultTail () {
+      this.topicTailValue = DEFAULTTAIL
+      this.changeTopicTail()
     },
     ...mapActions([
       'saveTheTheme',
@@ -102,7 +150,8 @@ export default {
   transform: translate3d(0, 100%, 0);
 }
 
-.options {
+.options,
+.topic-tail {
   position: fixed;
   z-index: 99;
   top: 0;
@@ -111,17 +160,33 @@ export default {
   bottom: 0;
   background-color: #f1f1f1;
 }
+.topic-tail {
+  z-index: 100;
+  .header {
+    .header_title {
+      margin-left: 0;
+    }
+  }
+}
 .header {
   display: flex;
   height: 48px;
   background-color: #444;
-  .back{
+  .back,
+  .close,
+  .default-tail{
     flex: 0 1 60px;
     height: 48px;
     line-height: 48px;
     padding-left: 30px;
     font-size: 20px;
     color: #f9f9f9;
+  }
+  .default-tail {
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 24px;
+    padding-left: 0;
   }
   .header_title {
     flex: 1 1 275px;
@@ -177,6 +242,24 @@ export default {
           }
         }
       }
+    }
+  }
+}
+.main {
+  .set-topic-tail {
+    width: 100%;
+    height: 100%;
+    padding: 12px 16px;
+    textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background-color: inherit;
+      font-size: 14px;
+      color: #333;
+      resize: none;
+      caret-color: #80bd01;
     }
   }
 }
