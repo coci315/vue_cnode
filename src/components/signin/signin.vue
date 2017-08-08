@@ -212,6 +212,7 @@ export default {
   }
   input {
     border-bottom: 2px solid #80bd01;
+    border-radius: 0;
   }
   button {
     border-radius: 2px;

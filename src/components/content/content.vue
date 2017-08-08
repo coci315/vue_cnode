@@ -1,7 +1,7 @@
 <template>
 <transition name="move">
   <div class="content">
-    <div class="refresh" v-show="isShowRefresh" ref="refresh">
+    <!-- <div class="refresh" v-show="isShowRefresh" ref="refresh">
       <p v-show="isShowText">
         <span class="arrow"><Icon :class="{rotate:isRotate}" type="android-arrow-down"></Icon></span>
         {{refreshText}}
@@ -9,7 +9,7 @@
     </div>
     <div class="loading-wrap" v-show="refreshing">
       <loading></loading>
-    </div>
+    </div> -->
     <scroll class="content_wrap" 
             :data="topics"
             :pullup="true"
@@ -21,7 +21,16 @@
             @pulldown="refreshData"
             ref="contentWrap"
     >
-      <div>
+      <div ref="div">
+        <div class="refresh" v-show="isShowRefresh" ref="refresh">
+          <p v-show="isShowText">
+            <span class="arrow"><Icon :class="{rotate:isRotate}" type="android-arrow-down"></Icon></span>
+            {{refreshText}}
+          </p>
+          <div class="loading-wrap" v-show="refreshing">
+            <loading></loading>
+          </div>
+        </div>
         <ul>
           <li v-for="(topic,index) in topics" class="topic">
             <a :href="'/topic/' + topic.id">
@@ -69,6 +78,7 @@
     </div>
     <router-view></router-view>
     <confirm ref="confirm" text="该操作需要登录帐户。是否现在登录？" confirmBtnText="登录" @confirm="toSignin"></confirm>
+    <tip ref="tip"><p>{{tipText}}</p></tip>
   </div>
 </transition>
 </template>
@@ -79,6 +89,7 @@ import {bus} from '../../common/js/bus.js'
 import scroll from '../../base/scroll/scroll'
 import loading from '../../base/loading/loading'
 import confirm from '../../base/confirm/confirm'
+import tip from '../../base/tip/tip'
 import {getTopics} from '../../api/api'
 import { mapGetters } from 'vuex'
 const titleTexts = {
@@ -93,7 +104,8 @@ export default {
   components: {
     scroll,
     loading,
-    confirm
+    confirm,
+    tip
   },
   data () {
     return {
@@ -110,11 +122,12 @@ export default {
       limit: 20,
       curTab: 'all',
       scrollY: 0,
-      isShowRefresh: false,
+      isShowRefresh: true,
       refreshing: false,
       isShowText: true,
       refreshText: '下拉刷新',
-      isRotate: false
+      isRotate: false,
+      tipText: ''
     }
   },
   computed: {
@@ -192,41 +205,33 @@ export default {
       this.$router.push('/signin')
     },
     refreshData () {
-      this.$refs.contentWrap.$el.style.marginTop = '20px'
-      this.isShowRefresh = false
-      this.isShowText = false
+      this.$refs.div.style.marginTop = '30px'
       this.refreshing = true
+      this.isShowText = false
       this.page = 1
       this.loadMoreShow = true
       getTopics(this.curTab, this.limit, this.page).then(res => {
         this.topics = res.data
         this.refreshing = false
-        this.$refs.contentWrap.$el.style.marginTop = '0'
+        setTimeout(() => {
+          this.isShowText = true
+        }, 500)
+        this.$refs.div.style.marginTop = '0'
+        this.tipText = '刷新成功'
+        this.$refs.tip.show()
       })
     },
     scroll (pos, maxScrollY) {
-      if (pos.y > 0) {
-        if (pos.y > 10) {
-          this.isShowRefresh = true
-          this.$refs.contentWrap.$el.style.marginTop = '30px'
-        }
-        if (pos.y > 50) {
-          this.refreshText = '释放更新'
-          this.isRotate = true
-        } else {
-          this.refreshText = '下拉刷新'
-          this.isRotate = false
-        }
-        return
+      const y = pos.y
+      if (y > 50) {
+        this.refreshText = '释放更新'
+        this.isRotate = true
+      } else {
+        this.refreshText = '下拉刷新'
+        this.isRotate = false
       }
+      if (pos.y > 0) return
       if (pos.y < maxScrollY) return
-      if (pos.y === 0) {
-        this.isShowRefresh = false
-        this.isShowText = true
-        if (!this.refreshing) {
-          this.$refs.contentWrap.$el.style.marginTop = '0'
-        }
-      }
       this.scrollY = pos.y
     }
   }
@@ -238,23 +243,20 @@ html,
 body {
   width: 100%;
 }
-.refresh,
-.loading-wrap {
-  position: fixed;
+
+.refresh {
+  position: absolute;
   z-index: 20;
   left: 0;
   right: 0;
-  top: 48px;
+  top: -30px;
   height: 30px;
   line-height: 30px;
-  padding-top: 10px;
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   font-size: 14px;
   color: #333;
   font-weight: bold;
   text-align: center;
-}
-.refresh {
   .arrow i{
     transition: all .2s;
     &.rotate {
@@ -262,6 +264,31 @@ body {
     }
   }
 }
+
+// .refresh,
+// .loading-wrap {
+//   position: fixed;
+//   z-index: 20;
+//   left: 0;
+//   right: 0;
+//   top: 48px;
+//   height: 30px;
+//   line-height: 30px;
+//   padding-top: 10px;
+//   background-color: rgba(0,0,0,0);
+//   font-size: 14px;
+//   color: #333;
+//   font-weight: bold;
+//   text-align: center;
+// }
+// .refresh {
+//   .arrow i{
+//     transition: all .2s;
+//     &.rotate {
+//       transform: rotate(-180deg);
+//     }
+//   }
+// }
 .content {
   position: fixed;
   z-index: 10;
