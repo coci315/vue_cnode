@@ -10,7 +10,10 @@ const state = {
   theme: loadFromLocal('THEME', 'white'),
   isSaveDraft: loadFromLocal('ISSAVEDRAFT', true),
   isTopicTailOn: loadFromLocal('ISTOPICTAILON', true),
-  topicTail: loadFromLocal('TOPICTAIL', '来自vue-cnode')
+  topicTail: loadFromLocal('TOPICTAIL', '来自vue-cnode'),
+  draftTab: loadFromLocal('DRAFTTAB', 'share'),
+  draftTitle: loadFromLocal('DRAFTTITLE', ''),
+  draftContent: loadFromLocal('DRAFTCONTENT', '')
 }
 
 export default state

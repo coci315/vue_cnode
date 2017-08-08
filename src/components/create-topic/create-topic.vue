@@ -25,7 +25,7 @@
       </span>
     </div>
     <div class="topic_title">
-      <input type="text" placeholder="标题，字数10字以上" v-model="title">
+      <input type="text" placeholder="标题，字数10字以上" v-model="title" ref="titleInput">
     </div>
     <div class="topic_content">
       <editor @change="changeContent" :value="content"></editor>
@@ -41,7 +41,7 @@ import editor from '../../base/editor/editor'
 import tip from '../../base/tip/tip'
 import confirm from '../../base/confirm/confirm'
 import {createTopic} from '../../api/api'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   components: {
     editor,
@@ -72,12 +72,33 @@ export default {
   computed: {
     ...mapGetters([
       'isSignin',
-      'accesstoken'
+      'accesstoken',
+      'isSaveDraft',
+      'draftTab',
+      'draftTitle',
+      'draftContent'
     ])
   },
   created () {
     if (!this.isSignin) {
       return this.$router.push('/signin')
+    }
+    if (this.isSaveDraft) {
+      this.tab = this.draftTab
+      this.title = this.draftTitle
+      this.content = this.draftContent
+    }
+  },
+  mounted () {
+    this.$refs.titleInput.focus()
+  },
+  beforeDestroy () {
+    if (this.isSaveDraft) {
+      this.saveTheDraft({
+        draftTab: this.tab,
+        draftTitle: this.title,
+        draftContent: this.content
+      })
     }
   },
   methods: {
@@ -123,7 +144,10 @@ export default {
         return false
       }
       return true
-    }
+    },
+    ...mapActions([
+      'saveTheDraft'
+    ])
   }
 }
 </script>

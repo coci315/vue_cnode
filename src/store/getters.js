@@ -8,3 +8,6 @@ export const theme = state => state.theme
 export const isSaveDraft = state => state.isSaveDraft
 export const isTopicTailOn = state => state.isTopicTailOn
 export const topicTail = state => state.topicTail
+export const draftTab = state => state.draftTab
+export const draftTitle = state => state.draftTitle
+export const draftContent = state => state.draftContent

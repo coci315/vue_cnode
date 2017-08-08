@@ -135,7 +135,7 @@ export default {
       }
     },
     refresh () {
-      this.$refs.main_wrap.refresh()
+      this.$refs.mainWrap.refresh()
     },
     refreshData () {
       this.$refs.ul.style.marginTop = '30px'

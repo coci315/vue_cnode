@@ -30,6 +30,15 @@ const mutations = {
   },
   [types.SET_TOPICTAIL] (state, topicTail) {
     state.topicTail = topicTail
+  },
+  [types.SET_DRAFTTAB] (state, draftTab) {
+    state.draftTab = draftTab
+  },
+  [types.SET_DRAFTTITLE] (state, draftTitle) {
+    state.draftTitle = draftTitle
+  },
+  [types.SET_DRAFTCONTENT] (state, draftContent) {
+    state.draftContent = draftContent
   }
 }
 

@@ -54,3 +54,9 @@ export function saveTopicTailSetting (isTopicTailOn) {
 export function saveTopicTail (topicTail) {
   saveToLocal('TOPICTAIL', topicTail)
 }
+
+export function saveDraft (draftTab, draftTitle, draftContent) {
+  saveToLocal('DRAFTTAB', draftTab)
+  saveToLocal('DRAFTTITLE', draftTitle)
+  saveToLocal('DRAFTCONTENT', draftContent)
+}
